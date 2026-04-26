@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FantasyForge — 多维分层世界地图</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:#0a0a0f;
+    color:#e9e3d3;
+    font-family:'Noto Serif SC','Cinzel',serif;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  header{
+    background:linear-gradient(180deg,#1a1a25,#0f0f18);
+    border-bottom:1px solid #3a3a4a;
+    padding:10px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:5;
+  }
+  h1{margin:0;font-size:1.1rem;letter-spacing:1px;font-weight:700;color:#d4c4a8}
+  .subtitle{opacity:.75;font-size:.82rem}
+  main{flex:1;position:relative;overflow:hidden}
+  .layer-panel{
+    position:absolute;left:16px;top:16px;
+    background:rgba(12,10,10,.92);
+    border:1px solid rgba(160,130,90,.5);
+    border-radius:9px;
+    padding:10px 12px;
+    min-width:190px;
+    font-size:.82rem;
+    z-index:6;
+  }
+  .layer-panel h3{margin:0 0 10px 0;font-size:.92rem;color:#e8d8b8}
+  .layer-btn{
+    display:flex;gap:10px;align-items:center;
+    margin:7px 0;padding:6px 8px;
+    cursor:pointer;border-radius:6px;
+    transition:all .15s ease;
+  }
+  .layer-btn:hover{background:rgba(255,255,255,.06)}
+  .layer-btn.active{background:rgba(230,192,122,.16);outline:1px solid rgba(230,192,122,.5)}
+  .layer-dot{width:10px;height:10px;border-radius:50%}
+  .layer-sky{background:#87b0ff}
+  .layer-surface{background:#e6c07a}
+  .layer-underground{background:#9a6a4a}
+  .layer-abyss{background:#7a2a2a}
+  .layer-cosmic{background:#a070d0}
+  .layer-faction{background:#7a9a5a}
+  .map{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(1200px 800px at 50% 50%, rgba(38,30,18,.85), rgba(8,6,5,.98)),
+      linear-gradient(135deg,#1a1410,#0b0806 55%,#0a0908);
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .map.hidden{opacity:0;pointer-events:none;transform:translateY(10px)}
+  .label-layer{
+    position:absolute;left:50%;top:18px;
+    transform:translateX(-50%);
+    font-size:1.05rem;letter-spacing:2px;
+    color:#e8d8b8;text-shadow:0 2px 8px rgba(0,0,0,.8);
+    z-index:4;
+  }
+  .landmass{
+    position:absolute;inset:8% 6%;
+    border:2px solid rgba(180,140,90,.35);
+    border-radius:6px;
+    box-shadow:
+      inset 0 0 80px rgba(0,0,0,.6),
+      0 0 40px rgba(0,0,0,.5);
+  }
+  .legend{
+    position:absolute;right:16px;top:16px;
+    background:rgba(10,10,18,.85);
+    border:1px solid rgba(150,120,90,.4);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:.78rem;
+    min-width:170px;
+    z-index:5;
+  }
+  .legend h3{margin:0 0 8px 0;font-size:.9rem;color:#d4c4a8}
+  .legend .row{display:flex;gap:10px;align-items:center;margin:6px 0}
+  .legend .dot{width:10px;height:10px;border-radius:50%}
+  /* Rank图例 - 新增 */
+  .legend-rank{margin-top:12px;padding-top:10px;border-top:1px solid rgba(150,120,90,.3)}
+  .legend-rank .row{font-size:.75rem}
+  .city{
+    position:absolute;display:flex;flex-direction:column;align-items:center;
+    cursor:pointer;transition:transform .18s ease, filter .18s ease;
+    filter:drop-shadow(0 0 8px rgba(0,0,0,.7));
+  }
+  .city:hover{transform:translateY(-3px) scale(1.05);filter:drop-shadow(0 0 14px rgba(255,200,140,.35))}
+  .city .marker{
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid rgba(250,240,220,.9);
+    box-shadow:0 0 0 3px rgba(0,0,0,.35);
+  }
+  /* Rank视觉编码 - 不同等级显示不同光晕 */
+  .city[data-rank="legend"] .marker{
+    box-shadow:0 0 12px 4px rgba(255,200,80,.7),0 0 0 3px rgba(0,0,0,.35);
+    animation:legend-pulse 2s ease-in-out infinite;
+  }
+  .city[data-rank="ss"] .marker{
+    box-shadow:0 0 8px 3px rgba(180,120,255,.6),0 0 0 3px rgba(0,0,0,.35);
+  }
+  .city[data-rank="s"] .marker{
+    box-shadow:0 0 6px 2px rgba(100,150,255,.5),0 0 0 3px rgba(0,0,0,.35);
+  }
+  @keyframes legend-pulse{
+    0%,100%{box-shadow:0 0 12px 4px rgba(255,200,80,.7),0 0 0 3px rgba(0,0,0,.35);}
+    50%{box-shadow:0 0 18px 6px rgba(255,200,80,.9),0 0 0 3px rgba(0,0,0,.35);}
+  }
+  .city .label{
+    margin-top:7px;font-size:.8rem;
+    text-shadow:0 2px 4px rgba(0,0,0,.8);
+    white-space:nowrap;letter-spacing:1px;
+  }
+  .city.light .marker{background:#e6c07a}
+  .city.evil .marker{background:#7a2a2a}
+  .city.neutral .marker{background:#6a9ccf}
+  .city.wasteland .marker{background:#a47c4b}
+  .city.sky .marker{background:#87b0ff}
+  .city.underground .marker{background:#9a6a4a}
+  .city.abyss .marker{background:#7a2a2a}
+  .city.cosmic .marker{background:#a070d0}
+  .city.faction-light .marker{background:#e6c07a}
+  .city.faction-dark .marker{background:#7a2a2a}
+  .city.faction-neutral .marker{background:#6a9ccf}
+  .city.faction-wasteland .marker{background:#a47c4b}
+  .tooltip{
+    position:absolute;pointer-events:none;
+    opacity:0;transform:translateY(6px);
+    transition:all .16s ease;
+    background:rgba(15,12,10,.94);
+    border:1px solid rgba(160,130,90,.55);
+    border-radius:8px;
+    padding:10px 12px;
+    min-width:200px;max-width:280px;
+    font-size:.85rem;
+    box-shadow:0 18px 40px rgba(0,0,0,.6);
+    z-index:10;
+  }
+  .tooltip.show{opacity:1;transform:translateY(0)}
+  .tooltip h4{margin:0 0 6px 0;color:#e8d8b8}
+  .tooltip p{margin:0;opacity:.8;line-height:1.45}
+  .tooltip .meta{margin-top:8px;font-size:.78rem;opacity:.65}
+  .time-info{
+    position:absolute;right:16px;bottom:60px;
+    background:rgba(12,10,10,.9);
+    border:1px solid rgba(160,130,90,.45);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:.8rem;
+    min-width:190px;
+    z-index:5;
+  }
+  footer{
+    background:linear-gradient(0deg,#14110f,#0f0d0b);
+    border-top:1px solid #2a2724;
+    padding:8px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:.78rem;opacity:.85;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>FantasyForge — 多维分层世界</h1>
+    <div class="subtitle">DB真实数据重建 · 18城市 + 19势力</div>
+  </div>
+  <div class="hint">点击左侧切换分层 · 悬停查看详情</div>
+</header>
+<main>
+  <div class="layer-panel">
+    <h3>世界分层</h3>
+    <div class="layer-btn" data-layer="sky">
+      <span class="layer-dot layer-sky"></span>
+      <span>天空界 · 时间×1.5</span>
+    </div>
+    <div class="layer-btn active" data-layer="surface">
+      <span class="layer-dot layer-surface"></span>
+      <span>主物质界 · 标准时间</span>
+    </div>
+    <div class="layer-btn" data-layer="underground">
+      <span class="layer-dot layer-underground"></span>
+      <span>地底界 · 时间×0.5</span>
+    </div>
+    <div class="layer-btn" data-layer="abyss">
+      <span class="layer-dot layer-abyss"></span>
+      <span>深渊虚空界 · 因果混乱</span>
+    </div>
+    <div class="layer-btn" data-layer="cosmic">
+      <span class="layer-dot layer-cosmic"></span>
+      <span>星界/外层界 · 时间静止</span>
+    </div>
+    <div class="layer-btn" data-layer="faction">
+      <span class="layer-dot layer-faction"></span>
+      <span>势力总览</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <h3>图例</h3>
+    <div class="row"><span class="dot" style="background:#87b0ff"></span><span>天空界 (飘浮)</span></div>
+    <div class="row"><span class="dot" style="background:#e6c07a"></span><span>光明/地表</span></div>
+    <div class="row"><span class="dot" style="background:#9a6a4a"></span><span>地底界 (地下)</span></div>
+    <div class="row"><span class="dot" style="background:#7a2a2a"></span><span>深渊/邪恶</span></div>
+    <div class="row"><span class="dot" style="background:#a070d0"></span><span>星界 (神祇)</span></div>
+    <div class="row"><span class="dot" style="background:#7a9a5a"></span><span>势力据点</span></div>
+    <div class="legend-rank">
+      <div class="row"><span class="dot" style="background:#ffc850;box-shadow:0 0 4px 2px rgba(255,200,80,.6)"></span><span>Legend 传说</span></div>
+      <div class="row"><span class="dot" style="background:#b478ff;box-shadow:0 0 3px 1.5px rgba(180,120,255,.5)"></span><span>SS 史诗</span></div>
+      <div class="row"><span class="dot" style="background:#6496ff;box-shadow:0 0 2px 1px rgba(100,150,255,.4)"></span><span>S 稀有</span></div>
+    </div>
+  </div>
+
+  <div class="time-info">
+    <div><strong>时间流速</strong></div>
+    <div style="margin-top:6px;opacity:.85">天空界 1 年 = 地表 1.5 年</div>
+    <div style="opacity:.85">地底界 1 年 = 地表 0.5 年</div>
+    <div style="opacity:.85">深渊/星界：因果混乱或静止</div>
+  </div>
+
+  <!-- SKY LAYER -->
+  <div class="map" id="layer-sky">
+    <div class="label-layer">天空界 · 时间流速 ×1.5</div>
+    <div class="landmass" style="opacity:.4"></div>
+    <div class="city sky" style="top:32%;left:38%;" data-name="达拉然" data-source="魔兽世界" data-rank="ss" data-desc="飘浮的魔法之城，肯瑞托议会所在地。整座城市悬浮在云端，无数塔楼与奥术阵列闪烁紫色光芒，是艾泽拉斯魔法研究的心脏。">
+      <div class="marker"></div><div class="label">达拉然</div>
+    </div>
+    <div class="city sky" style="top:40%;left:62%;" data-name="史盖利格" data-source="艾尔登法环" data-rank="d" data-desc="交界地的魔法学院，雷娜菈女王统治的浮空之城。满月的倒影在湖泊中永恒旋转，辉石魔法在此诞生与传承。">
+      <div class="marker"></div><div class="label">史盖利格</div>
+    </div>
+  </div>
+
+  <!-- SURFACE LAYER -->
+  <div class="map" id="layer-surface">
+    <div class="label-layer">主物质界 · 标准时间</div>
+    <div class="landmass"></div>
+    <div class="city light" style="top:14%;left:22%;" data-name="暴风城" data-source="魔兽世界" data-rank="ss" data-desc="人类王国艾泽拉斯的首都，联盟核心枢纽。雄伟的白银之臂城墙守护着这座永不陷落的光明之城，大教堂的钟声每日回荡。">
+      <div class="marker"></div><div class="label">暴风城</div>
+    </div>
+    <div class="city evil" style="top:12%;left:38%;" data-name="奥格瑞玛" data-source="魔兽世界" data-rank="ss" data-desc="兽人主城，由萨尔建立在杜隆塔尔干旱的峡谷中。整座城市从岩石中开凿而成，展现着部落的力量与荣耀。">
+      <div class="marker"></div><div class="label">奥格瑞玛</div>
+    </div>
+    <div class="city neutral" style="top:10%;left:58%;" data-name="银月城" data-source="魔兽世界" data-rank="ss" data-desc="血精灵的都城，曾经的高等精灵王国首都。耀眼的光芒照耀着永生的精灵子民，浮空的太阳井散发着神圣能量。">
+      <div class="marker"></div><div class="label">银月城</div>
+    </div>
+    <div class="city neutral" style="top:30%;left:48%;" data-name="米纳斯提里斯" data-source="指环王" data-rank="ss" data-desc="刚铎的白城，人类联盟最后的堡垒。七层城墙层层递进，最高处是刚铎之塔，俯瞰着整个帕兰诺平原。">
+      <div class="marker"></div><div class="label">米纳斯提里斯</div>
+    </div>
+    <div class="city neutral" style="top:28%;left:68%;" data-name="洛丝萝莲" data-source="指环王" data-rank="ss" data-desc="精灵女王的领地，整片森林都是黄金与银叶的梦境。凯兰崔尔的魔法让这里永驻春天的荣光，是中土最神秘的精灵国度。">
+      <div class="marker"></div><div class="label">洛丝萝莲</div>
+    </div>
+    <div class="city neutral" style="top:26%;left:32%;" data-name="埃雷萨拉斯" data-source="英雄无敌" data-rank="ss" data-desc="精灵与龙族共治的神秘都市，魔法塔林立。龙骑士在云端巡逻，保护着学院的知识宝库，是塔楼阵营的核心城市。">
+      <div class="marker"></div><div class="label">埃雷萨拉斯</div>
+    </div>
+    <div class="city neutral" style="top:34%;left:18%;" data-name="刚达巴" data-source="指环王" data-rank="ss" data-desc="矮人都城，由古老矮人在孤独山中建造。大厅宏伟如殿堂，曾遭史矛革霸占。巴林远征队曾在此全军覆没。">
+      <div class="marker"></div><div class="label">刚达巴</div>
+    </div>
+    <div class="city neutral" style="top:42%;left:52%;" data-name="夏尔" data-source="指环王" data-rank="c" data-desc="霍比特人的家园，宁静的田园村庄。圆门的洞穴住宅掩映在绿丘之间，比尔博和弗罗多的故事从这里开始。">
+      <div class="marker"></div><div class="label">夏尔</div>
+    </div>
+    <div class="city neutral" style="top:48%;left:42%;" data-name="布里" data-source="指环王" data-rank="c" data-desc="人类与霍比特人混居的小镇，跃马旅店是冒险者的重要中转站。是夏尔以东最后的人类定居点。">
+      <div class="marker"></div><div class="label">布里</div>
+    </div>
+    <div class="city neutral" style="top:52%;left:62%;" data-name="十字路口" data-source="魔兽世界" data-rank="c" data-desc="贫瘠之地的部落前哨站，商队与冒险者的必经之地。简陋的帐篷与篱笆围成的小营地，是新手区域的重要枢纽。">
+      <div class="marker"></div><div class="label">十字路口</div>
+    </div>
+    <div class="city neutral" style="top:35%;left:78%;" data-name="真新镇" data-source="宠物小精灵" data-rank="c" data-desc="许多训练家的出发地，安静祥和的小镇。小智、小茂、小遥都从这里开始冒险，是关都地区的起点。">
+      <div class="marker"></div><div class="label">真新镇</div>
+    </div>
+    <div class="city neutral" style="top:44%;left:72%;" data-name="常磐市" data-source="宠物小精灵" data-rank="c" data-desc="靠近常磐森林的城市，道馆馆主是强大的坂木。也是前往石英高原参加联盟大赛的最后一站。">
+      <div class="marker"></div><div class="label">常磐市</div>
+    </div>
+    <div class="city wasteland" style="top:70%;left:60%;" data-name="亚特兰大" data-source="原创" data-rank="legend" data-desc="重建于末世废土之上的科技要塞，以佐治亚理工学院古老的穹顶建筑为核心。巨型净水塔与电磁防护屏障守护着最后的文明火种。">
+      <div class="marker"></div><div class="label">亚特兰大</div>
+    </div>
+  </div>
+
+  <!-- UNDERGROUND LAYER -->
+  <div class="map hidden" id="layer-underground">
+    <div class="label-layer">地底界 · 时间流速 ×0.5</div>
+    <div class="landmass" style="opacity:.55"></div>
+    <div class="city underground" style="top:28%;left:35%;" data-name="铁炉堡" data-source="魔兽世界" data-rank="ss" data-desc="矮人的地下都城，从丹莫罗的山脉中开凿而成。大熔炉的火焰永不熄灭，是锻造之都的心脏。">
+      <div class="marker"></div><div class="label">铁炉堡</div>
+    </div>
+    <div class="city underground" style="top:22%;left:22%;" data-name="幽暗城" data-source="魔兽世界" data-rank="ss" data-desc="被遗忘者的首都，建在洛丹伦废墟下方。绿色的炼金蒸汽弥漫，死亡与科学的诡异结合，是希尔瓦娜斯女王的大本营。">
+      <div class="marker"></div><div class="label">幽暗城</div>
+    </div>
+    <div class="city underground" style="top:36%;left:58%;" data-name="瑞文戴尔" data-source="暗黑破坏神" data-rank="d" data-desc="崔凡克的诅咒神殿，三大魔王封印之地。扭曲的钟楼与腐烂的花园，空气中弥漫着硫磺与死亡气息。">
+      <div class="marker"></div><div class="label">瑞文戴尔</div>
+    </div>
+  </div>
+
+  <!-- ABYSS LAYER -->
+  <div class="map hidden" id="layer-abyss">
+    <div class="label-layer">深渊虚空界 · 因果混乱</div>
+    <div class="landmass" style="opacity:.65;border-color:rgba(120,40,40,.7)"></div>
+    <div class="city abyss" style="top:30%;left:28%;" data-name="魔多帝国" data-source="指环王" data-rank="ss" data-desc="黑暗魔君索伦的领地，整座帝国建立在火山与灰烬之上。无数兽人、强兽人、那兹古尔在此集结，是中土最恐怖的邪恶势力。">
+      <div class="marker"></div><div class="label">魔多帝国</div>
+    </div>
+    <div class="city abyss" style="top:40%;left:52%;" data-name="深渊之眼" data-source="原创" data-rank="legend" data-desc="来自深海的神秘教派，他们膜拜沉睡在海底的旧日支配者。深渊之眼的信徒能够窥见宇宙的终极秘密，但代价是永远的疯狂。">
+      <div class="marker"></div><div class="label">深渊之眼</div>
+    </div>
+    <div class="city abyss" style="top:36%;left:72%;" data-name="虚空先锋" data-source="原创" data-rank="legend" data-desc="来自虚空深处的先遣军团，他们是毁灭的使者，所经之处万物化为虚无。虚空先锋由虚空龙、虚空行者与虚空领主组成。">
+      <div class="marker"></div><div class="label">虚空先锋</div>
+    </div>
+    <div class="city abyss" style="top:48%;left:60%;" data-name="暗影契约" data-source="原创" data-rank="legend" data-desc="由堕落的法师、刺客与死灵术士组成的秘密结社，他们与暗影世界签订了永恒的契约，以灵魂为代价换取无尽的黑暗力量。">
+      <div class="marker"></div><div class="label">暗影契约</div>
+    </div>
+  </div>
+
+  <!-- COSMIC LAYER: 暂无DB条目（星界/外层界为宇宙维度层面，此处可扩展） -->
+  <div class="map hidden" id="layer-cosmic">
+    <div class="label-layer">星界/外层界 · 时间静止</div>
+    <div class="landmass" style="opacity:.35;border-color:rgba(160,112,208,.5)"></div>
+    <div class="city cosmic" style="top:36%;left:50%;" data-name="血色黄昏" data-source="原创" data-rank="ss" data-desc="嗜血的吸血鬼与狼人组成的黑暗议会，他们以人类的鲜血为食，在月光下狩猎。血色黄昏认为自己是更高等的生命。">
+      <div class="marker"></div><div class="label">血色黄昏</div>
+    </div>
+  </div>
+
+  <!-- FACTION LAYER -->
+  <div class="map hidden" id="layer-faction">
+    <div class="label-layer">势力总览 · 19大阵营</div>
+    <div class="landmass" style="opacity:.6;border-color:rgba(122,154,90,.7)"></div>
+
+    <div class="city faction-light" style="top:14%;left:15%;" data-name="洛丹伦联盟" data-source="魔兽世界" data-rank="ss" data-desc="人类七王国在第二次战争时组成的同盟，以洛丹伦为核心对抗部落。">
+      <div class="marker"></div><div class="label">洛丹伦联盟</div>
+    </div>
+    <div class="city faction-light" style="top:12%;left:30%;" data-name="白银之手骑士团" data-source="魔兽世界" data-rank="ss" data-desc="乌瑟尔·光明使者建立的圣骑士团，是洛丹伦王国的守护者。">
+      <div class="marker"></div><div class="label">白银之手骑士团</div>
+    </div>
+    <div class="city faction-light" style="top:10%;left:48%;" data-name="法师议会" data-source="暗黑破坏神" data-rank="ss" data-desc="赫拉迪姆兄弟会的继承者，守护着庇护之地免受地狱侵袭。">
+      <div class="marker"></div><div class="label">法师议会</div>
+    </div>
+    <div class="city faction-light" style="top:18%;left:68%;" data-name="塔楼学院" data-source="英雄无敌" data-rank="ss" data-desc="精灵与龙族共同统治的魔法城邦，以知识与智慧为最高追求。">
+      <div class="marker"></div><div class="label">塔楼学院</div>
+    </div>
+    <div class="city faction-light" style="top:24%;left:82%;" data-name="刚铎王国" data-source="指环王" data-rank="ss" data-desc="努门诺尔人在中土建立的南方王国，米纳斯提里斯是其首都。">
+      <div class="marker"></div><div class="label">刚铎王国</div>
+    </div>
+    <div class="city faction-neutral" style="top:34%;left:18%;" data-name="霜狼氏族" data-source="魔兽世界" data-rank="ss" data-desc="德拉诺最古老的兽人氏族之一，由杜隆坦领导，以战吼闻名。">
+      <div class="marker"></div><div class="label">霜狼氏族</div>
+    </div>
+    <div class="city faction-neutral" style="top:32%;left:35%;" data-name="钢铁部落" data-source="魔兽世界" data-rank="ss" data-desc="由加尔鲁什·地狱咆哮在另一条时间线建立的兽人帝国。">
+      <div class="marker"></div><div class="label">钢铁部落</div>
+    </div>
+    <div class="city faction-wasteland" style="top:36%;left:58%;" data-name="废土行者联盟" data-source="原创" data-rank="ss" data-desc="末世废土中幸存者的结盟，以亚特兰大科技要塞为核心。">
+      <div class="marker"></div><div class="label">废土行者联盟</div>
+    </div>
+    <div class="city faction-dark" style="top:44%;left:22%;" data-name="暗影议会" data-source="魔兽世界" data-rank="ss" data-desc="古尔丹建立的秘密术士组织，暗中操控部落的命运。">
+      <div class="marker"></div><div class="label">暗影议会</div>
+    </div>
+    <div class="city faction-dark" style="top:42%;left:40%;" data-name="炎魔之手" data-source="原创" data-rank="legend" data-desc="崇拜毁灭与烈焰的狂热宗教组织，相信只有通过焚烧一切，世界才能获得新生。">
+      <div class="marker"></div><div class="label">炎魔之手</div>
+    </div>
+    <div class="city faction-dark" style="top:46%;left:58%;" data-name="钢铁王朝" data-source="原创" data-rank="ss" data-desc="由机械与血肉结合的恐怖帝国，他们的口号是：血肉苦弱，机械永生。">
+      <div class="marker"></div><div class="label">钢铁王朝</div>
+    </div>
+    <div class="city faction-dark" style="top:44%;left:76%;" data-name="巫毒教团" data-source="原创" data-rank="ss" data-desc="掌握诅咒与死灵术的黑暗教派，他们的信仰是：死亡不是终结，而是奴役的开始。">
+      <div class="marker"></div><div class="label">巫毒教团</div>
+    </div>
+    <div class="city faction-dark" style="top:54%;left:28%;" data-name="混沌之种" data-source="原创" data-rank="s" data-desc="散播混乱与疯狂的邪教组织，他们相信秩序是束缚，混沌才是自由。">
+      <div class="marker"></div><div class="label">混沌之种</div>
+    </div>
+    <div class="city faction-dark" style="top:52%;left:48%;" data-name="黑铁议会" data-source="原创" data-rank="s" data-desc="由堕落的贵族、贪婪的商人与野心勃勃的将军组成的阴谋集团。">
+      <div class="marker"></div><div class="label">黑铁议会</div>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+</main>
+<footer>
+  <div class="left">
+    <span>5层世界 + 1势力层 · 18城市 + 19势力</span>
+  </div>
+  <div class="right">
+    FantasyForge · v1.2 (DB真实数据重建)
+  </div>
+</footer>
+<script>
+const tooltip=document.getElementById('tooltip');
+const layers=['sky','surface','underground','abyss','cosmic','faction'];
+const layerBtns=document.querySelectorAll('.layer-btn');
+const layerMaps={};
+layers.forEach(l=>layerMaps[l]=document.getElementById('layer-'+l));
+
+function switchLayer(target){
+  layers.forEach(l=>{
+    if(l===target){layerMaps[l].classList.remove('hidden');}
+    else{layerMaps[l].classList.add('hidden');}
+  });
+  layerBtns.forEach(b=>b.classList.toggle('active', b.dataset.layer===target));
+}
+layerBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>switchLayer(btn.dataset.layer));
+});
+
+function showTooltip(el,x,y,data){
+  // Rank显示名称映射
+  const rankNames={legend:'传说',ss:'史诗',s:'稀有',a:'精英',b:'优秀',c:'普通',d:'特殊',e:'罕见'};
+  const rankDisplay=rankNames[data.rank]||data.rank.toUpperCase();
+  tooltip.innerHTML=`
+    <h4>${data.name} <span style="opacity:.6;font-size:.75rem">(${rankDisplay})</span></h4>
+    <p>${data.desc}</p>
+    <div class="meta">来源：${data.source}</div>
+  `;
+  // 优化tooltip位置，避免超出视窗
+  const mapRect = document.querySelector('main').getBoundingClientRect();
+  let left = x;
+  let top = y + 18;
+  const tooltipWidth = 280;
+  const tooltipHeight = 140;
+  if (left + tooltipWidth > mapRect.width - 20) left = mapRect.width - tooltipWidth - 20;
+  if (top + tooltipHeight > mapRect.height - 20) top = y - tooltipHeight - 10;
+  if (left < 20) left = 20;
+  if (top < 20) top = 20;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+  tooltip.classList.add('show');
+}
+function hideTooltip(){tooltip.classList.remove('show');}
+document.querySelectorAll('.city').forEach(city=>{
+  city.addEventListener('mouseenter',e=>{
+    const rect=city.getBoundingClientRect();
+    const mapRect=document.querySelector('main').getBoundingClientRect();
+    showTooltip(city,
+      rect.left - mapRect.left + rect.width/2,
+      rect.top - mapRect.top,
+      {
+        name:city.dataset.name,
+        rank:city.dataset.rank,
+        source:city.dataset.source,
+        desc:city.dataset.desc
+      }
+    );
+  });
+  city.addEventListener('mouseleave',()=>hideTooltip());
+});
+switchLayer('surface');
+</script>
+</body>
+</html>
