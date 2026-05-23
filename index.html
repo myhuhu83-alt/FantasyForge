@@ -7,92 +7,126 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FantasyForge">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0a12'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='%23d4a853'>⚔</text></svg>">
-<title>FantasyForge 奇幻命名宝库 v2.0</title>
+<title>FantasyForge 奇幻命名宝库 v3.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Serif+SC:wght@300;500;700&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a12;--bg-surface:#12101c;--bg-surface2:#1a1828;--border:#2a2440;--border2:#3a3450;--gold:#d4a853;--gold-dim:#a88a46;--gold-bright:#f0d080;--text:#e8e0d0;--text-muted:#7a7090;--text-muted2:#5a5070;--red:#c94040;--blue:#4090c9;--green:#50b060}
+:root{--bg:#080810;--bg-surface:rgba(14,12,24,0.82);--bg-surface2:rgba(22,18,36,0.88);--border:rgba(55,45,85,0.45);--border2:rgba(75,65,105,0.55);--gold:#d4a853;--gold-dim:#a88a46;--gold-bright:#f0d080;--text:#e8e0d0;--text-muted:#8a7ea0;--text-muted2:#5a5070;--red:#c94040;--blue:#4090c9;--green:#50b060;--glass:rgba(16,12,30,0.55);--glass-border:rgba(100,80,160,0.18);--glow-gold:0 0 30px rgba(212,168,83,0.15);--glow-purple:0 0 25px rgba(140,80,220,0.12);--radius:14px;--radius-sm:10px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+::selection{background:rgba(212,168,83,0.35);color:#fff}
+::placeholder{color:var(--text-muted2)}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Serif SC','Crimson Pro',Georgia,serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden;position:relative}
 .hidden{display:none!important}
 .text-center{text-align:center}
 .text-muted{color:var(--text-muted)}
 
-/* Header */
-.header{text-align:center;padding:20px 20px 12px;background:linear-gradient(180deg,rgba(10,10,18,0) 0%,rgba(10,10,18,1) 100%)}
-.header h1{font-size:2rem;letter-spacing:6px;font-weight:300;background:linear-gradient(180deg,#f0d88a 0%,#a07828 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Cinzel",Georgia,serif;margin-bottom:6px}
-.header .subtitle{color:var(--text-muted);font-size:0.85rem;letter-spacing:2px}
+/* ========== Loading Screen ========== */
+.loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s ease,visibility 0.8s ease}
+.loading-screen.fade-out{opacity:0;visibility:hidden}
+.loading-forge{position:relative;width:120px;height:120px;margin-bottom:24px}
+.loading-anvil{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:56px;filter:grayscale(0.2)}
+.loading-hammer{position:absolute;top:0;left:50%;transform-origin:bottom center;animation:hammerStrike 1.2s ease-in-out infinite;font-size:40px}
+@keyframes hammerStrike{0%,100%{transform:translateX(-50%) rotate(-40deg)}30%{transform:translateX(-50%) rotate(10deg)}35%{transform:translateX(-50%) rotate(-5deg)}50%{transform:translateX(-50%) rotate(0deg)}}
+.loading-sparks{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:40px;height:20px}
+.loading-spark{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--gold-bright);animation:sparkFly 1.2s ease-out infinite}
+.loading-spark:nth-child(1){left:5px;animation-delay:0.3s}
+.loading-spark:nth-child(2){left:15px;animation-delay:0.5s}
+.loading-spark:nth-child(3){left:25px;animation-delay:0.4s}
+.loading-spark:nth-child(4){left:35px;animation-delay:0.6s}
+@keyframes sparkFly{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(0.3)}}
+.loading-title{font-family:'Cinzel',serif;font-size:1.6rem;letter-spacing:8px;background:linear-gradient(180deg,#f0d88a 0%,#a07828 100%);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px}
+.loading-bar-wrap{width:200px;height:3px;background:rgba(212,168,83,0.1);border-radius:2px;overflow:hidden}
+.loading-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dim),var(--gold-bright));border-radius:2px;transition:width 0.3s}
+.loading-subtitle{color:var(--text-muted2);font-size:0.75rem;margin-top:10px;letter-spacing:3px}
 
-/* Toolbar */
-.toolbar{display:flex;gap:10px;padding:12px 20px;justify-content:center;flex-wrap:wrap;align-items:center}
-.search-box{display:flex;align-items:center;background:var(--bg-surface);border:1px solid var(--border);border-radius:24px;padding:8px 16px;flex:0 1 360px;max-width:100%}
-.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:0.9rem}
-.search-box input::placeholder{color:var(--text-muted)}
-.btn{padding:8px 16px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);border-radius:20px;cursor:pointer;font-size:0.85rem;transition:all 0.2s;white-space:nowrap}
-.btn:hover{border-color:var(--gold-dim);color:var(--gold)}
-.btn.on,.btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+/* ========== Particle Canvas ========== */
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.5}
 
-/* Nav */
-.nav{display:flex;gap:6px;padding:8px 20px;justify-content:center;flex-wrap:wrap}
-.nav-btn{padding:7px 14px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);border-radius:18px;cursor:pointer;font-size:0.82rem;transition:all 0.2s;white-space:nowrap}
-.nav-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
-.nav-btn.on{background:var(--gold);color:#000;border-color:var(--gold)}
-.cat-count{font-size:0.72rem;opacity:0.7;margin-left:3px}
+/* ========== Z-Index Layering ========== */
+body>.header,body>.toolbar,body>.nav,body>.info-bar,body>.el-filter,body>.legend-bar,body>.map-toggle,body>.map-wrap,body>.grid,body>.empty,body>.stats-dashboard,body>.adv-filter{position:relative;z-index:1}
 
-/* Info bar */
-.info-bar{display:flex;gap:16px;padding:6px 20px;justify-content:center;flex-wrap:wrap;font-size:0.82rem;color:var(--text-muted2)}
+/* Header v3 */
+.header{text-align:center;padding:28px 20px 16px;background:linear-gradient(180deg,rgba(8,8,16,0) 0%,rgba(8,8,16,1) 100%);position:relative}
+.header::before{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,83,0.2),transparent)}
+.header h1{font-size:2.2rem;letter-spacing:8px;font-weight:400;background:linear-gradient(180deg,#f0d88a 0%,#a07828 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:'Cinzel',serif;margin-bottom:8px;position:relative}
+.header h1::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.header .subtitle{color:var(--text-muted);font-size:0.82rem;letter-spacing:3px;font-weight:300}
+
+/* Toolbar v3 */
+.toolbar{display:flex;gap:10px;padding:14px 20px;justify-content:center;flex-wrap:wrap;align-items:center}
+.search-box{display:flex;align-items:center;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:24px;padding:10px 18px;flex:0 1 380px;max-width:100%;transition:all 0.3s}
+.search-box:focus-within{border-color:rgba(212,168,83,0.4);box-shadow:0 0 20px rgba(212,168,83,0.08)}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:0.9rem;font-family:inherit}
+.search-box input::placeholder{color:var(--text-muted2)}
+.btn{padding:8px 16px;border:1px solid var(--glass-border);background:var(--glass);backdrop-filter:blur(8px);color:var(--text-muted);border-radius:20px;cursor:pointer;font-size:0.82rem;transition:all 0.25s;white-space:nowrap;font-family:inherit}
+.btn:hover{border-color:rgba(212,168,83,0.4);color:var(--gold);background:rgba(212,168,83,0.06)}
+.btn.on,.btn.active{background:rgba(212,168,83,0.18);color:var(--gold);border-color:rgba(212,168,83,0.5)}
+
+/* Nav v3 */
+.nav{display:flex;gap:6px;padding:10px 20px;justify-content:center;flex-wrap:wrap}
+.nav-btn{padding:7px 14px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-muted);border-radius:18px;cursor:pointer;font-size:0.82rem;transition:all 0.25s;white-space:nowrap;font-family:inherit;backdrop-filter:blur(8px)}
+.nav-btn:hover{border-color:rgba(212,168,83,0.4);color:var(--gold)}
+.nav-btn.on{background:rgba(212,168,83,0.18);color:var(--gold);border-color:rgba(212,168,83,0.5)}
+.cat-count{font-size:0.7rem;opacity:0.6;margin-left:3px}
+
+/* Info bar v3 */
+.info-bar{display:flex;gap:16px;padding:8px 20px;justify-content:center;flex-wrap:wrap;font-size:0.82rem;color:var(--text-muted2)}
 .info-bar .item{display:flex;align-items:center;gap:4px}
 .info-bar .dot{width:8px;height:8px;border-radius:50%}
 .legend-bar{display:flex;gap:12px;padding:8px 20px;justify-content:center;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-muted2)}
-.legend-dot{width:10px;height:10px;border-radius:50%}
+.legend-dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 4px currentColor}
 
-/* Element filter */
-.el-filter{display:flex;gap:5px;padding:6px 20px;justify-content:center;flex-wrap:wrap}
-.el-btn{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);border-radius:14px;cursor:pointer;font-size:0.75rem;transition:all 0.15s}
-.el-btn:hover{color:var(--gold)}
-.el-btn.on{background:rgba(212,168,83,0.2);color:var(--gold);border-color:var(--gold-dim)}
+/* Element filter v3 */
+.el-filter{display:flex;gap:5px;padding:8px 20px;justify-content:center;flex-wrap:wrap}
+.el-btn{display:inline-flex;align-items:center;gap:3px;padding:5px 11px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-muted);border-radius:14px;cursor:pointer;font-size:0.75rem;transition:all 0.2s;font-family:inherit}
+.el-btn:hover{color:var(--gold);border-color:rgba(212,168,83,0.3)}
+.el-btn.on{background:rgba(212,168,83,0.15);color:var(--gold);border-color:rgba(212,168,83,0.4)}
 .el-btn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
 /* Map toggle */
 .map-toggle{text-align:center;padding:10px 20px 0}
 .map-toggle .btn{font-size:0.9rem;padding:8px 20px}
 
-/* Map container */
-.map-wrap{display:none;flex-direction:column;border-top:1px solid var(--border);margin:12px 20px 20px;border-radius:12px;overflow:hidden;background:var(--bg-surface)}
+/* Map container v3 */
+.map-wrap{display:none;flex-direction:column;border-top:1px solid var(--border);margin:12px 20px 20px;border-radius:var(--radius);overflow:hidden;background:var(--bg-surface);backdrop-filter:blur(12px)}
 .map-wrap.on{display:flex}
-.map-hdr{padding:12px 16px;background:rgba(15,12,22,0.98);border-bottom:1px solid rgba(160,130,90,0.3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.map-hdr h3{font-size:1rem;color:var(--gold);letter-spacing:1px;font-weight:400;margin:0}
+.map-hdr{padding:12px 16px;background:rgba(10,8,18,0.98);border-bottom:1px solid rgba(160,130,90,0.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.map-hdr h3{font-size:1rem;color:var(--gold);letter-spacing:1px;font-weight:400;margin:0;font-family:'Cinzel',serif}
 .map-hdr .meta{font-size:0.8rem;opacity:0.6}
 .map-desc{padding:10px 16px 0;font-size:0.82rem;color:var(--text-muted);line-height:1.5}
 
 /* Layer tabs */
-.layer-tabs{display:flex;gap:6px;padding:10px 16px;background:rgba(10,10,16,0.95);border-bottom:1px solid rgba(100,100,120,0.2);flex-wrap:wrap}
-.ltab{padding:5px 12px;border:1px solid rgba(150,130,90,0.3);background:rgba(20,18,30,0.8);color:var(--text-muted);border-radius:14px;cursor:pointer;font-size:0.8rem;transition:all 0.15s}
-.ltab:hover{border-color:var(--gold-dim);color:var(--gold)}
-.ltab.on{background:rgba(212,168,83,0.2);border-color:var(--gold-dim);color:var(--gold)}
+.layer-tabs{display:flex;gap:6px;padding:10px 16px;background:rgba(8,8,14,0.95);border-bottom:1px solid rgba(80,80,100,0.15);flex-wrap:wrap}
+.ltab{padding:5px 12px;border:1px solid rgba(150,130,90,0.2);background:rgba(16,14,24,0.8);color:var(--text-muted);border-radius:14px;cursor:pointer;font-size:0.8rem;transition:all 0.2s;font-family:inherit}
+.ltab:hover{border-color:rgba(212,168,83,0.4);color:var(--gold)}
+.ltab.on{background:rgba(212,168,83,0.15);border-color:rgba(212,168,83,0.4);color:var(--gold)}
 
 /* Map main */
 .map-main{flex:1;position:relative;padding:16px;min-height:420px}
 .map-lay{position:absolute;inset:12px;opacity:1;transition:opacity 0.3s}
 .map-lay.hidden{opacity:0;pointer-events:none}
-.map-land{position:absolute;inset:0;border:1.5px solid rgba(180,140,90,0.25);border-radius:8px;box-shadow:inset 0 0 60px rgba(0,0,0,0.5),0 0 20px rgba(0,0,0,0.3)}
+.map-land{position:absolute;inset:0;border:1px solid rgba(160,130,80,0.15);border-radius:8px;box-shadow:inset 0 0 60px rgba(0,0,0,0.5),0 0 20px rgba(0,0,0,0.3)}
 
-/* City icons */
-.city-ic{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:pointer;filter:drop-shadow(0 0 6px rgba(0,0,0,0.7));transition:transform 0.18s,filter 0.18s;z-index:5}
-.city-ic:hover{transform:translateY(-4px) scale(1.1);filter:drop-shadow(0 0 14px rgba(212,168,83,0.4))}
-.city-ic .mk{width:14px;height:14px;border-radius:50%;border:2px solid rgba(250,240,220,0.9);box-shadow:0 0 0 2px rgba(0,0,0,0.4);transition:all 0.15s}
+/* City icons v3 */
+.city-ic{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:pointer;filter:drop-shadow(0 0 6px rgba(0,0,0,0.7));transition:transform 0.2s,filter 0.2s;z-index:5}
+.city-ic:hover{transform:translateY(-4px) scale(1.12);filter:drop-shadow(0 0 16px rgba(212,168,83,0.5))}
+.city-ic .mk{width:14px;height:14px;border-radius:50%;border:2px solid rgba(250,240,220,0.9);box-shadow:0 0 0 2px rgba(0,0,0,0.4);transition:all 0.2s}
 .city-ic .lbl{margin-top:6px;font-size:0.72rem;text-shadow:0 2px 5px rgba(0,0,0,0.9);white-space:nowrap;color:var(--text)}
 .city-ic[data-rank="legend"] .mk{animation:lpulse 2s ease-in-out infinite}
-@keyframes lpulse{0%,100%{box-shadow:0 0 10px 4px rgba(212,168,83,0.6)}50%{box-shadow:0 0 18px 6px rgba(212,168,83,0.9)}}
-.city-ic[data-rank="ss"] .mk{box-shadow:0 0 8px 3px rgba(160,100,220,0.5)}
-.city-ic[data-rank="s"] .mk{box-shadow:0 0 6px 2px rgba(80,120,200,0.4)}
+@keyframes lpulse{0%,100%{box-shadow:0 0 10px 4px rgba(212,168,83,0.6)}50%{box-shadow:0 0 20px 8px rgba(212,168,83,0.9)}}
+.city-ic[data-rank="ss"] .mk{box-shadow:0 0 10px 4px rgba(160,100,220,0.5)}
+.city-ic[data-rank="s"] .mk{box-shadow:0 0 8px 3px rgba(80,120,200,0.4)}
 .city-ic[data-rank="d"] .mk{box-shadow:0 0 4px 2px rgba(120,120,100,0.4)}
 
-/* Map tip */
-.map-tip{position:absolute;pointer-events:none;opacity:0;transform:translateY(6px);transition:all 0.18s;background:rgba(10,8,16,0.97);border:1px solid rgba(180,150,90,0.5);border-radius:10px;padding:0;min-width:260px;max-width:320px;font-size:0.82rem;box-shadow:0 16px 40px rgba(0,0,0,0.6);z-index:20;overflow:hidden}
+/* Map tip v3 */
+.map-tip{position:absolute;pointer-events:none;opacity:0;transform:translateY(6px);transition:all 0.2s;background:rgba(10,8,16,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(180,150,90,0.4);border-radius:var(--radius);padding:0;min-width:260px;max-width:320px;font-size:0.82rem;box-shadow:0 20px 50px rgba(0,0,0,0.7);z-index:20;overflow:hidden}
 .map-tip.show{opacity:1;transform:translateY(0)}
-.map-tip-hdr{padding:10px 12px;background:rgba(30,25,40,0.95);border-bottom:1px solid rgba(150,130,90,0.25);display:flex;justify-content:space-between;align-items:center}
+.map-tip-hdr{padding:10px 12px;background:rgba(24,20,36,0.95);border-bottom:1px solid rgba(150,130,90,0.2);display:flex;justify-content:space-between;align-items:center}
 .map-tip-hdr h4{margin:0;color:var(--gold);font-size:0.92rem}
-.map-tip-hdr .rank{bg:gold;color:#000;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600}
+.map-tip-hdr .rank{padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600}
 .map-tip-body{padding:10px 12px}
 .map-tip-body p{margin:0 0 8px;line-height:1.45}
 .map-tip-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.75rem;color:var(--text-muted)}
@@ -100,64 +134,87 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .map-tip-meta .label{color:var(--text-muted2)}
 
 /* Map legend */
-.map-legend{position:absolute;right:12px;top:12px;background:rgba(10,8,16,0.92);border:1px solid rgba(150,120,90,0.3);border-radius:8px;padding:10px 12px;font-size:0.75rem;min-width:130px}
+.map-legend{position:absolute;right:12px;top:12px;background:rgba(8,6,14,0.92);backdrop-filter:blur(10px);border:1px solid rgba(120,100,70,0.25);border-radius:8px;padding:10px 12px;font-size:0.75rem;min-width:130px}
 .map-legend h4{margin:0 0 8px;color:var(--gold);font-size:0.82rem}
 .map-legend .r{display:flex;gap:6px;align-items:center;margin:4px 0}
 .map-legend .mk-s{width:10px;height:10px;border-radius:50%;border:1px solid rgba(250,240,220,0.7);flex-shrink:0}
-.map-legend .type-sep{margin:6px 0 4px;border-top:1px solid rgba(100,90,70,0.3)}
+.map-legend .type-sep{margin:6px 0 4px;border-top:1px solid rgba(80,70,50,0.25)}
 
-/* Faction list */
+/* Faction list v3 */
 .faction-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:12px}
-.faction-card{padding:10px 12px;background:rgba(20,18,28,0.8);border:1px solid rgba(100,90,70,0.3);border-radius:8px;cursor:pointer;transition:all 0.15s}
-.faction-card:hover{border-color:var(--gold-dim);background:rgba(30,28,40,0.9)}
+.faction-card{padding:10px 12px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:8px;cursor:pointer;transition:all 0.2s}
+.faction-card:hover{border-color:rgba(212,168,83,0.4);background:rgba(30,28,40,0.9)}
 .faction-card h5{margin:0 0 4px;font-size:0.85rem;color:var(--text)}
 .faction-card p{margin:0;font-size:0.72rem;color:var(--text-muted);line-height:1.4}
 .faction-card .type-tag{display:inline-block;padding:1px 6px;border-radius:8px;font-size:0.65rem;margin-top:4px}
 
-/* Event toast */
-.event-toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(10,8,16,0.98);border:1px solid var(--gold-dim);border-radius:10px;padding:12px 20px;font-size:0.9rem;opacity:0;transition:all 0.3s;pointer-events:none;z-index:100;max-width:400px;text-align:center}
+/* Event toast v3 */
+.event-toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:rgba(8,6,14,0.98);backdrop-filter:blur(16px);border:1px solid rgba(212,168,83,0.4);border-radius:var(--radius);padding:12px 20px;font-size:0.9rem;opacity:0;transition:all 0.3s;pointer-events:none;z-index:100;max-width:400px;text-align:center}
 .event-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .event-toast .icon{font-size:1.5rem;margin-bottom:4px}
 
-/* Grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:16px;max-width:1600px;margin:0 auto}
+/* Grid v3 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:16px;max-width:1600px;margin:0 auto;position:relative;z-index:1}
 
-/* Card */
-.card{background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:8px}
-.card:hover{border-color:var(--gold-dim);transform:translateY(-2px);box-shadow:0 12px 24px rgba(0,0,0,0.3)}
-.card.highlight{border-color:var(--gold);box-shadow:0 0 24px rgba(212,168,83,0.35);animation:cardPulse 0.5s}
+/* Card v3 - Glassmorphism */
+.card{position:relative;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all 0.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;gap:8px;overflow:hidden;opacity:0;transform:translateY(16px);animation:cardReveal 0.5s cubic-bezier(.4,0,.2,1) forwards}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,83,0.2),transparent);opacity:0;transition:opacity 0.3s}
+.card::after{content:'';position:absolute;inset:0;border-radius:var(--radius);background:radial-gradient(ellipse at 50% 0%,rgba(212,168,83,0.04) 0%,transparent 70%);pointer-events:none;opacity:0;transition:opacity 0.3s}
+.card:hover{border-color:rgba(212,168,83,0.35);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.4),0 0 30px rgba(212,168,83,0.06)}
+.card:hover::before,.card:hover::after{opacity:1}
+.card:active{transform:translateY(-2px) scale(0.985)}
+.card.highlight{border-color:var(--gold);box-shadow:0 0 30px rgba(212,168,83,0.3);animation:cardReveal 0.5s cubic-bezier(.4,0,.2,1) forwards,cardPulse 0.6s ease 0.5s}
+@keyframes cardReveal{to{opacity:1;transform:translateY(0)}}
 @keyframes cardPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.card-name{font-weight:600;color:var(--text);font-size:0.95rem}
-.card-source{background:rgba(212,168,83,0.12);color:var(--gold);padding:2px 8px;border-radius:6px;font-size:0.7rem;white-space:nowrap}
-.card-desc{font-size:0.82rem;color:var(--text-muted);line-height:1.5;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid rgba(42,36,64,0.3)}
-.elements{display:flex;gap:3px;flex-wrap:wrap}
-.el-dot{width:12px;height:12px;border-radius:50%;cursor:pointer}
-.rank-tag{padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:600}
-.empty{text-align:center;padding:60px 20px;color:var(--text-muted2)}
+.card-name{font-weight:600;color:var(--text);font-size:0.95rem;letter-spacing:0.5px}
+.card-source{background:rgba(212,168,83,0.1);color:var(--gold);padding:2px 10px;border-radius:8px;font-size:0.68rem;white-space:nowrap;border:1px solid rgba(212,168,83,0.12)}
+.card-desc{font-size:0.82rem;color:var(--text-muted);line-height:1.55;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:10px;border-top:1px solid rgba(55,45,85,0.2)}
+.elements{display:flex;gap:4px;flex-wrap:wrap}
+.el-dot{width:12px;height:12px;border-radius:50%;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+.el-dot:hover{transform:scale(1.4);box-shadow:0 0 8px currentColor}
+.rank-tag{padding:3px 10px;border-radius:10px;font-size:0.68rem;font-weight:700;letter-spacing:0.5px}
+.empty{text-align:center;padding:60px 20px;color:var(--text-muted2);position:relative;z-index:1}
 .empty-icon{font-size:3.5rem;margin-bottom:12px;opacity:0.3}
 
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.88);color:#fff;padding:10px 20px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-size:0.85rem;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:100}
-.toast.show{opacity:1}
+/* Rank Visual Enhancement v3 */
+.card[data-rank="legend"]{border-color:rgba(230,201,122,0.55);box-shadow:0 0 25px rgba(230,201,122,0.12),inset 0 0 30px rgba(230,201,122,0.02)}
+.card[data-rank="legend"]::after{background:radial-gradient(ellipse at 50% 0%,rgba(230,201,122,0.08) 0%,transparent 70%);opacity:1}
+.card[data-rank="legend"]:hover{box-shadow:0 0 40px rgba(230,201,122,0.22),0 20px 40px rgba(0,0,0,0.4)}
+.card[data-rank="legend"] .card-name{background:linear-gradient(90deg,#e8d090,#c89838,#e8d090);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:legendShimmer 3s ease-in-out infinite}
+@keyframes legendShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.card[data-rank="ss"]{border-color:rgba(160,112,208,0.45);box-shadow:0 0 20px rgba(160,112,208,0.1),inset 0 0 20px rgba(160,112,208,0.02)}
+.card[data-rank="ss"]::after{background:radial-gradient(ellipse at 50% 0%,rgba(160,112,208,0.06) 0%,transparent 70%);opacity:1}
+.card[data-rank="ss"]:hover{box-shadow:0 0 35px rgba(160,112,208,0.18),0 20px 40px rgba(0,0,0,0.4)}
+.card[data-rank="ss"] .card-name{color:#c0a0e8}
+.card[data-rank="s"]{border-color:rgba(106,156,207,0.35)}
+.card[data-rank="a"]{border-color:rgba(112,208,128,0.3)}
+.card[data-rank="b"]{border-color:rgba(199,199,122,0.25)}
+.card[data-rank="c"]{border-color:rgba(199,155,86,0.2)}
+.card[data-rank="d"]{border-color:rgba(153,95,44,0.2)}
+.card[data-rank="e"]{border-color:rgba(102,74,41,0.2)}
 
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s}
+/* Toast v3 */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(10,8,16,0.95);backdrop-filter:blur(14px);color:#fff;padding:10px 22px;border-radius:10px;border:1px solid var(--glass-border);box-shadow:0 12px 30px rgba(0,0,0,0.4);font-size:0.85rem;opacity:0;pointer-events:none;transition:all 0.3s;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Modal v3 - Immersive */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .modal-overlay.show{opacity:1;pointer-events:auto}
-.modal{background:var(--bg-surface2);border:1px solid var(--border2);border-radius:12px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;transform:scale(0.95);transition:transform 0.2s}
-.modal-overlay.show .modal{transform:scale(1)}
-.modal-hdr{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg-surface2);z-index:1}
-.modal-hdr h3{margin:0;color:var(--gold);font-size:1.1rem}
-.modal-close{background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;line-height:1}
-.modal-close:hover{color:var(--text)}
-.modal-body{padding:16px}
-.modal-body h2{color:var(--gold);font-size:1.2rem;margin:0 0 12px;border-bottom:1px solid rgba(212,168,83,0.2);padding-bottom:8px}
+.modal{background:rgba(16,12,28,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius);max-width:520px;width:90%;max-height:85vh;overflow-y:auto;transform:scale(0.92) translateY(10px);transition:transform 0.35s cubic-bezier(.4,0,.2,1);box-shadow:0 30px 60px rgba(0,0,0,0.6)}
+.modal-overlay.show .modal{transform:scale(1) translateY(0)}
+.modal-hdr{padding:18px;border-bottom:1px solid rgba(55,45,85,0.3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(16,12,28,0.98);backdrop-filter:blur(12px);z-index:1;border-radius:var(--radius) var(--radius) 0 0}
+.modal-hdr h3{margin:0;color:var(--gold);font-size:1.1rem;font-family:'Cinzel',serif;letter-spacing:0.5px}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:1.5rem;cursor:pointer;line-height:1;transition:color 0.2s,transform 0.2s}
+.modal-close:hover{color:var(--text);transform:rotate(90deg)}
+.modal-body{padding:18px}
+.modal-body h2{color:var(--gold);font-size:1.2rem;margin:0 0 12px;border-bottom:1px solid rgba(212,168,83,0.15);padding-bottom:8px;font-family:'Cinzel',serif}
 .modal-body h3{color:var(--gold-dim);font-size:0.95rem;margin:14px 0 6px}
 .modal-body p{color:var(--text-muted);font-size:0.85rem;margin:0 0 8px;line-height:1.6}
 .modal-body ul,.modal-body ol{margin:6px 0;padding-left:20px}
 .modal-body li{color:var(--text-muted);font-size:0.85rem;margin:3px 0;line-height:1.5}
-.modal-body blockquote{background:rgba(212,168,83,0.08);border-left:3px solid var(--gold-dim);padding:8px 12px;margin:10px 0;border-radius:0 6px 6px 0}
+.modal-body blockquote{background:rgba(212,168,83,0.06);border-left:3px solid var(--gold-dim);padding:8px 12px;margin:10px 0;border-radius:0 8px 8px 0}
 .modal-body blockquote em{color:var(--text);font-style:italic;font-size:0.9rem}
 .modal-body strong{color:var(--text)}
 .modal-section{margin-bottom:16px}
@@ -165,97 +222,176 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .modal-section h4{color:var(--gold);font-size:0.85rem;margin:0 0 8px}
 .modal-section p{color:var(--text-muted);font-size:0.85rem;margin:0;line-height:1.5}
 .modal-tags{display:flex;flex-wrap:wrap;gap:6px}
-.modal-tag{display:inline-block;padding:4px 10px;background:rgba(212,168,83,0.1);border:1px solid rgba(212,168,83,0.3);border-radius:12px;font-size:0.75rem;color:var(--text-muted)}
+.modal-tag{display:inline-block;padding:4px 10px;background:rgba(212,168,83,0.08);border:1px solid rgba(212,168,83,0.2);border-radius:12px;font-size:0.75rem;color:var(--text-muted)}
 
-/* Responsive */
+/* Light Theme v3 */
+body.light{--bg:#f0ece4;--bg-surface:rgba(255,255,255,0.9);--bg-surface2:rgba(248,246,242,0.95);--border:rgba(200,192,180,0.6);--border2:rgba(180,172,160,0.7);--gold:#b08820;--gold-dim:#907018;--gold-bright:#d4a853;--text:#2a2420;--text-muted:#6a6058;--text-muted2:#8a8078;--glass:rgba(255,255,255,0.7);--glass-border:rgba(180,170,150,0.3)}
+body.light .card{background:rgba(255,255,255,0.8);border-color:rgba(200,192,180,0.5)}
+body.light .card:hover{box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+body.light .search-box{background:rgba(255,255,255,0.8);border-color:rgba(200,192,180,0.5)}
+body.light .search-box input{color:#2a2420}
+body.light .modal{background:rgba(255,255,255,0.95)}
+body.light .modal-hdr{background:rgba(248,246,242,0.98)}
+body.light .map-wrap{background:rgba(255,255,255,0.9)}
+body.light .map-hdr{background:rgba(248,246,242,0.98)}
+body.light .map-land{border-color:rgba(180,170,150,0.3);box-shadow:inset 0 0 40px rgba(0,0,0,0.03)}
+body.light .event-toast{background:rgba(255,255,255,0.98)}
+body.light .toast{background:rgba(40,36,32,0.92);color:#fff}
+body.light .stats-dashboard{background:rgba(248,246,242,0.7)}
+body.light .adv-filter{background:rgba(248,246,242,0.5)}
+body.light #particleCanvas{opacity:0.2}
+
+/* Theme Toggle v3 */
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:300;width:40px;height:40px;border-radius:50%;border:1px solid var(--glass-border);background:var(--glass);backdrop-filter:blur(10px);color:var(--text);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.theme-toggle:hover{border-color:rgba(212,168,83,0.4);color:var(--gold)}
+
+/* Achievement System v3 */
+.ach-toast{position:fixed;top:20px;right:20px;z-index:400;background:rgba(10,8,16,0.98);backdrop-filter:blur(16px);border:1px solid var(--gold);border-radius:var(--radius);padding:16px 20px;max-width:320px;transform:translateX(400px);transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 20px 40px rgba(0,0,0,0.5)}
+.ach-toast.show{transform:translateX(0)}
+.ach-toast .ach-icon{font-size:2rem;margin-bottom:4px}
+.ach-toast .ach-name{color:var(--gold);font-weight:600;font-size:0.95rem}
+.ach-toast .ach-desc{color:var(--text-muted);font-size:0.8rem;margin-top:2px}
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+.ach-card{padding:12px;background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);position:relative;overflow:hidden}
+.ach-card.unlocked{border-color:rgba(212,168,83,0.4);background:rgba(212,168,83,0.06)}
+.ach-card.locked{opacity:0.5}
+.ach-card .ach-icon-sm{font-size:1.4rem}
+.ach-card .ach-name{color:var(--text);font-size:0.85rem;font-weight:600;margin-top:4px}
+.ach-card .ach-desc{color:var(--text-muted);font-size:0.72rem;margin-top:2px}
+.ach-card .ach-progress{margin-top:6px;height:3px;background:rgba(20,16,36,0.5);border-radius:2px;overflow:hidden}
+.ach-card .ach-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.3s;border-radius:2px}
+.ach-card .ach-check{position:absolute;top:8px;right:8px;color:var(--gold);font-size:1rem}
+
+/* Adventure Mode v3 */
+.adv-container{padding:16px}
+.adv-scene{padding:16px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:var(--radius);margin-bottom:12px}
+.adv-scene h3{color:var(--gold);margin:0 0 10px;font-size:1rem}
+.adv-scene p{color:var(--text-muted);font-size:0.88rem;line-height:1.6;margin:0 0 8px}
+.adv-choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.adv-choice{padding:12px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.25s;text-align:left;font-size:0.88rem;color:var(--text);font-family:inherit}
+.adv-choice:hover{border-color:rgba(212,168,83,0.4);background:rgba(212,168,83,0.06)}
+.adv-choice .adv-choice-icon{margin-right:8px}
+.adv-stats{display:flex;gap:12px;padding:12px;background:rgba(212,168,83,0.05);border-radius:var(--radius-sm);margin-bottom:12px;flex-wrap:wrap}
+.adv-stat{display:flex;align-items:center;gap:6px;font-size:0.82rem}
+.adv-stat .adv-stat-val{color:var(--gold);font-weight:600}
+.adv-log{max-height:150px;overflow-y:auto;padding:10px;background:rgba(8,6,14,0.5);border-radius:8px;font-size:0.8rem;line-height:1.5;margin-top:10px}
+.adv-log p{margin:3px 0}
+.adv-loot{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.adv-loot-tag{padding:4px 10px;background:rgba(212,168,83,0.12);border:1px solid rgba(212,168,83,0.25);border-radius:12px;font-size:0.75rem;color:var(--gold)}
+
+.collect-btn{cursor:pointer;font-size:0.9rem;transition:transform 0.15s,opacity 0.15s;opacity:0.7}
+.collect-btn:hover{transform:scale(1.3);opacity:1}
+.collect-btn.collected{opacity:1}
+
+/* Responsive v3 */
 @media(max-width:768px){
-  .header h1{font-size:1.5rem}
-  .grid{grid-template-columns:1fr;padding:12px}
+  .header h1{font-size:1.5rem;letter-spacing:5px}
+  .grid{grid-template-columns:1fr;padding:12px;gap:10px}
   .search-box{flex:1 1 100%}
   .map-main{min-height:300px}
   .map-legend{font-size:0.7rem;min-width:110px}
   .faction-list{grid-template-columns:1fr}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 12px;gap:6px}
+  .toolbar .btn{flex-shrink:0;padding:6px 12px;font-size:0.78rem}
+  .search-box{flex:0 0 200px;min-width:160px}
+  .modal{width:95%;max-height:90vh;border-radius:12px}
+  .char-options{gap:4px}
+  .char-option{padding:6px 8px;font-size:0.72rem}
+  .card{padding:14px}
 }
 
-/* Character Builder Modal */
+/* Character Builder Modal v3 */
 .char-builder{padding:20px}
-.char-step{margin-bottom:20px;padding:15px;background:rgba(20,18,28,0.8);border-radius:10px;border:1px solid var(--border)}
+.char-step{margin-bottom:20px;padding:15px;background:var(--glass);border-radius:var(--radius-sm);border:1px solid var(--glass-border)}
 .char-step h4{color:var(--gold);margin:0 0 10px;font-size:0.9rem}
 .char-options{display:flex;flex-wrap:wrap;gap:8px}
-.char-option{padding:8px 12px;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.8rem;transition:all 0.15s}
-.char-option:hover{border-color:var(--gold-dim)}
-.char-option.selected{background:rgba(212,168,83,0.2);border-color:var(--gold);color:var(--gold)}
-.char-result{margin-top:20px;padding:15px;background:rgba(30,25,40,0.9);border-radius:10px;border:1px solid var(--gold-dim)}
+.char-option{padding:8px 12px;background:var(--glass);border:1px solid var(--glass-border);border-radius:8px;cursor:pointer;font-size:0.8rem;transition:all 0.2s;font-family:inherit}
+.char-option:hover{border-color:rgba(212,168,83,0.4)}
+.char-option.selected{background:rgba(212,168,83,0.15);border-color:rgba(212,168,83,0.5);color:var(--gold)}
+.char-result{margin-top:20px;padding:15px;background:rgba(24,20,38,0.9);border-radius:var(--radius-sm);border:1px solid rgba(212,168,83,0.3)}
 .char-result h4{color:var(--gold);margin:0 0 10px}
 .char-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-.char-stat{text-align:center;padding:8px;background:rgba(20,18,28,0.8);border-radius:6px}
+.char-stat{text-align:center;padding:8px;background:var(--glass);border-radius:6px}
 .char-stat .val{font-size:1.2rem;color:var(--gold)}
 .char-stat .label{font-size:0.7rem;color:var(--text-muted)}
 
-/* Party Generator */
+/* Party Generator v3 */
 .party-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;padding:15px}
-.party-member{padding:15px;background:rgba(20,18,28,0.8);border-radius:10px;border:1px solid var(--border)}
+.party-member{padding:15px;background:var(--glass);border-radius:var(--radius-sm);border:1px solid var(--glass-border)}
 .party-member h5{color:var(--gold);margin:0 0 10px}
-.party-slot{padding:6px 10px;background:var(--bg-surface);border-radius:6px;margin:4px 0;font-size:0.8rem}
-.party-synergy{margin-top:15px;padding:10px;background:rgba(212,168,83,0.1);border-radius:8px}
+.party-slot{padding:6px 10px;background:rgba(14,12,24,0.6);border-radius:6px;margin:4px 0;font-size:0.8rem}
+.party-synergy{margin-top:15px;padding:10px;background:rgba(212,168,83,0.08);border-radius:8px}
 
-/* Codex Progress */
+/* Codex Progress v3 */
 .codex-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:15px}
-.codex-cat{padding:12px;background:rgba(20,18,28,0.8);border-radius:10px;border:1px solid var(--border)}
+.codex-cat{padding:12px;background:var(--glass);border-radius:var(--radius-sm);border:1px solid var(--glass-border)}
 .codex-cat h5{color:var(--gold);margin:0 0 8px;display:flex;justify-content:space-between}
-.codex-bar{height:8px;background:var(--bg-surface);border-radius:4px;overflow:hidden}
-.codex-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.3s}
+.codex-bar{height:6px;background:rgba(20,16,36,0.5);border-radius:3px;overflow:hidden}
+.codex-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.3s;border-radius:3px}
 .codex-stats{display:flex;justify-content:space-between;margin-top:6px;font-size:0.75rem;color:var(--text-muted)}
 
-/* Battle Simulator */
+/* Battle Simulator v3 */
 .battle-arena{display:flex;gap:20px;padding:20px;justify-content:center}
-.battle-side{flex:1;max-width:300px;padding:15px;background:rgba(20,18,28,0.8);border-radius:10px;border:2px solid var(--border)}
-.battle-side.left{border-color:rgba(100,150,200,0.5)}
-.battle-side.right{border-color:rgba(200,100,100,0.5)}
+.battle-side{flex:1;max-width:300px;padding:15px;background:var(--glass);border-radius:var(--radius-sm);border:2px solid var(--glass-border)}
+.battle-side.left{border-color:rgba(100,150,200,0.4)}
+.battle-side.right{border-color:rgba(200,100,100,0.4)}
 .battle-side h4{color:var(--gold);margin:0 0 10px;text-align:center}
 .battle-vs{text-align:center;padding:20px;font-size:2rem;color:var(--gold)}
-.battle-log{max-height:200px;overflow-y:auto;padding:10px;background:rgba(10,8,16,0.9);border-radius:8px;margin-top:15px}
+.battle-log{max-height:200px;overflow-y:auto;padding:10px;background:rgba(8,6,14,0.9);border-radius:8px;margin-top:15px}
 .battle-log p{margin:4px 0;font-size:0.8rem;line-height:1.4}
 .battle-log .dmg{color:#c94040}
 .battle-log .heal{color:#50b060}
 .battle-log .info{color:var(--text-muted)}
 
-/* Rank Visual Enhancement */
-.card[data-rank="legend"]{border-color:rgba(230,201,122,0.8);box-shadow:0 0 20px rgba(230,201,122,0.3)}
-.card[data-rank="ss"]{border-color:rgba(160,112,208,0.7);box-shadow:0 0 15px rgba(160,112,208,0.2)}
-.card[data-rank="s"]{border-color:rgba(106,156,207,0.6)}
-.card[data-rank="a"]{border-color:rgba(112,208,128,0.5)}
-.card[data-rank="b"]{border-color:rgba(199,199,122,0.4)}
-.card[data-rank="c"]{border-color:rgba(199,155,86,0.3)}
-.card[data-rank="d"]{border-color:rgba(153,95,44,0.3)}
-.card[data-rank="e"]{border-color:rgba(102,74,41,0.3)}
-
-/* Stats Dashboard */
-.stats-dashboard{display:flex;gap:15px;padding:10px 20px;justify-content:center;flex-wrap:wrap;background:rgba(15,12,22,0.5);border-bottom:1px solid var(--border)}
-.stat-item{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg-surface);border-radius:20px;font-size:0.8rem}
+/* Stats Dashboard v3 */
+.stats-dashboard{display:flex;gap:12px;padding:10px 20px;justify-content:center;flex-wrap:wrap;background:rgba(12,10,22,0.5);border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+.stat-item{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--glass);backdrop-filter:blur(8px);border-radius:20px;font-size:0.8rem;border:1px solid var(--glass-border)}
 .stat-item .icon{font-size:1rem}
 .stat-item .val{color:var(--gold);font-weight:600}
 .stat-item .label{color:var(--text-muted)}
 
-/* Advanced Filter */
-.adv-filter{display:flex;gap:10px;padding:8px 20px;justify-content:center;flex-wrap:wrap;background:rgba(15,12,22,0.3)}
+/* Advanced Filter v3 */
+.adv-filter{display:flex;gap:10px;padding:8px 20px;justify-content:center;flex-wrap:wrap;background:rgba(12,10,22,0.3)}
 .filter-group{display:flex;gap:4px;align-items:center}
 .filter-group .label{font-size:0.75rem;color:var(--text-muted2);margin-right:4px}
-.rank-btn{padding:4px 8px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);border-radius:12px;cursor:pointer;font-size:0.72rem;transition:all 0.15s}
-.rank-btn:hover{border-color:var(--gold-dim)}
-.rank-btn.on{background:rgba(212,168,83,0.2);border-color:var(--gold-dim);color:var(--gold)}
-.source-select{padding:4px 8px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);border-radius:12px;font-size:0.72rem;cursor:pointer}
+.rank-btn{padding:4px 8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-muted);border-radius:12px;cursor:pointer;font-size:0.72rem;transition:all 0.2s;font-family:inherit}
+.rank-btn:hover{border-color:rgba(212,168,83,0.3)}
+.rank-btn.on{background:rgba(212,168,83,0.15);border-color:rgba(212,168,83,0.4);color:var(--gold)}
+.source-select{padding:4px 8px;border:1px solid var(--glass-border);background:var(--glass);color:var(--text-muted);border-radius:12px;font-size:0.72rem;cursor:pointer;font-family:inherit}
+
 </style>
 </head>
 <body>
 
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-forge">
+    <div class="loading-hammer">🔨</div>
+    <div class="loading-anvil">⚒</div>
+    <div class="loading-sparks">
+      <div class="loading-spark"></div>
+      <div class="loading-spark"></div>
+      <div class="loading-spark"></div>
+      <div class="loading-spark"></div>
+    </div>
+  </div>
+  <div class="loading-title">FANTASY FORGE</div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+  <div class="loading-subtitle">锻造中...</div>
+</div>
+
+<!-- Particle Background -->
+<canvas id="particleCanvas"></canvas>
+
 <div class="header">
   <h1>⚔ FANTASY FORGE</h1>
-  <div class="subtitle">五层世界 · 奇幻命名宝库 v2.0</div>
+  <div class="subtitle">五层世界 · 奇幻命名宝库 v3.0</div>
 <div class="stats-dashboard" id="statsDashboard"></div>
 <div class="adv-filter" id="advFilter"></div>
 
 </div>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换日夜主题">🌙</button>
 
 <div class="toolbar">
   <div class="search-box">
@@ -267,6 +403,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <button class="btn" onclick="randomParty()">👥 随机组队</button>
     <button class="btn" onclick="openCodex()">📖 图鉴进度</button>
     <button class="btn" onclick="openBattleSim()">⚔️ 对战模拟</button>
+  <button class="btn" onclick="openAchievements()">🏆 成就</button>
+  <button class="btn" onclick="openAdventure()">🧪 冒险模式</button>
 
 </div>
 
@@ -371,6 +509,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 </div>
 <div class="toast" id="toast"></div>
 <div class="event-toast" id="eventToast"></div>
+<div class="ach-toast" id="achToast"></div>
 
 <!-- Detail Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -881,6 +1020,198 @@ var DB = [
 ,{id:'s42',name:'影分身',rank:'s',cat:'skill',source:'火影忍者',elements:['dark','normal'],desc:'创造多个实体分身，可独立行动和攻击'}
 ,{id:'s43',name:'元素爆发',rank:'s',cat:'skill',source:'原神',elements:['fire','ice','electric'],desc:'同时释放三种元素之力，产生连锁反应'}
 ,{id:'s44',name:'召唤图腾',rank:'s',cat:'skill',source:'魔兽世界',elements:['ground','psychic'],desc:'召唤元素图腾，为队友提供增益或对敌人造成伤害'}
+,{id:'p01',name:'生命药水',rank:'c',cat:'potion',source:'原创',elements:['normal'],desc:'恢复50点生命值，是冒险者背包里的常备药水。味苦但管用。'}
+,{id:'p02',name:'法力药水',rank:'c',cat:'potion',source:'原创',elements:['psychic'],desc:'恢复30点法力值，法师出门必带。蓝色的液体，喝起来像薄荷。'}
+,{id:'p03',name:'铁皮药水',rank:'b',cat:'potion',source:'原创',elements:['steel'],desc:'饮用后皮肤如钢铁般坚硬，持续5分钟。副作用：全身发痒。'}
+,{id:'p04',name:'火焰抗性药水',rank:'b',cat:'potion',source:'原创',elements:['fire'],desc:'大幅降低火焰伤害，在火山地区探险必备。入口温热。'}
+,{id:'p05',name:'冰霜抗性药水',rank:'b',cat:'potion',source:'原创',elements:['ice'],desc:'大幅降低冰霜伤害，北境冒险的保险。入口冰冷。'}
+,{id:'p06',name:'隐身药水',rank:'a',cat:'potion',source:'原创',elements:['dark'],desc:'饮用后隐身3分钟，刺客和盗贼的最爱。但别打喷嚏。'}
+,{id:'p07',name:'力量药水',rank:'a',cat:'potion',source:'原创',elements:['fighting'],desc:'力量翻倍持续10分钟，战士的兴奋剂。喝完想砸东西。'}
+,{id:'p08',name:'速度药水',rank:'a',cat:'potion',source:'原创',elements:['flying'],desc:'移动速度提升3倍，持续5分钟。游侠和斥候的宝贝。'}
+,{id:'p09',name:'解毒药水',rank:'b',cat:'potion',source:'原创',elements:['poison'],desc:'清除体内一切毒素，在沼泽和丛林探险必备。味道像草地。'}
+,{id:'p10',name:'万能药',rank:'ss',cat:'potion',source:'原创',elements:['fairy','light'],desc:'能治愈任何疾病和诅咒的传说药水，炼金术的终极杰作。'}
+,{id:'p11',name:'凤凰之泪',rank:'legend',cat:'potion',source:'原创',elements:['fire','fairy'],desc:'凤凰流下的眼泪凝结而成，能起死回生。全世界仅存三瓶。'}
+,{id:'p12',name:'永生之泉',rank:'legend',cat:'potion',source:'原创',elements:['fairy','psychic'],desc:'传说中的永生之水，饮用后可停止衰老。但灵魂会逐渐失去感知。'}
+,{id:'p13',name:'龙血药水',rank:'ss',cat:'potion',source:'原创',elements:['dragon','fire'],desc:'以龙血炼制的药水，赋予短暂的龙族之力，对火焰免疫。'}
+,{id:'p14',name:'暗影之油',rank:'a',cat:'potion',source:'原创',elements:['dark','ghost'],desc:'涂抹在武器上，使攻击附带暗影伤害，持续一场战斗。'}
+,{id:'p15',name:'圣水',rank:'b',cat:'potion',source:'原创',elements:['light'],desc:'经圣光祝圣的水，对亡灵和恶魔有灼烧效果。驱魔人的标配。'}
+,{id:'p16',name:'狂暴药剂',rank:'a',cat:'potion',source:'原创',elements:['fire','fighting'],desc:'进入狂暴状态，攻击力暴增但防御下降，持续3分钟。'}
+,{id:'p17',name:'变形药水',rank:'ss',cat:'potion',source:'原创',elements:['psychic','fairy'],desc:'变形为任意生物1小时，是潜入和侦察的终极道具。'}
+,{id:'p18',name:'深渊之液',rank:'ss',cat:'potion',source:'原创',elements:['dark','dragon'],desc:'来自深渊的黑色液体，饮用后能看穿一切伪装和幻象，但精神会受侵蚀。'}
+,{id:'p19',name:'月光精华',rank:'ss',cat:'potion',source:'原创',elements:['fairy','ice'],desc:'月之女神赐予的银色液体，饮用后在月光下力量倍增，伤口快速愈合。'}
+,{id:'p20',name:'时间沙漏',rank:'legend',cat:'potion',source:'原创',elements:['psychic','ice'],desc:'将周围时间减缓至1/10，持续10秒。克洛诺斯的恩赐，每瓶只能用一次。'}
+,{id:'q01',name:'黑龙之影',rank:'ss',cat:'quest',source:'原创',elements:['dark','fire'],desc:'调查暴风城中的内鬼，揭穿奥妮克希亚的人形伪装。奖励：暴风城勋章'}
+,{id:'q02',name:'霜之哀伤的呼唤',rank:'legend',cat:'quest',source:'原创',elements:['ice','dark'],desc:'前往诺森德冰封王座，面对巫妖王的诱惑。你会拔出那把剑吗？奖励：霜之哀伤碎片'}
+,{id:'q03',name:'魔戒远征',rank:'legend',cat:'quest',source:'指环王',elements:['dark','fire'],desc:'将至尊魔戒投入末日火山的岩浆中。整个中土的命运都系于此行。奖励：自由'}
+,{id:'q04',name:'三大魔王封印',rank:'legend',cat:'quest',source:'暗黑破坏神',elements:['dark','fire','ghost'],desc:'前往崔凡克，封印迪亚波罗、巴尔和墨菲斯托。赫拉迪姆的使命。奖励：灵魂石'}
+,{id:'q05',name:'铁炉堡大熔炉',rank:'ss',cat:'quest',source:'原创',elements:['steel','fire'],desc:'重新点燃铁炉堡大熔炉的永恒之火。矮人王国的命运系于此火。奖励：秘银锻造术'}
+,{id:'q06',name:'虚空裂隙',rank:'ss',cat:'quest',source:'原创',elements:['dark','psychic'],desc:'封印出现在北境的虚空裂隙，阻止深渊势力的渗透。奖励：虚空抗性'}
+,{id:'q07',name:'龙眠神殿试炼',rank:'ss',cat:'quest',source:'原创',elements:['dragon','fire'],desc:'通过五大守护巨龙的试炼，获得龙族的认可。奖励：龙语者称号'}
+,{id:'q08',name:'血色黄昏',rank:'ss',cat:'quest',source:'原创',elements:['dark','fighting'],desc:'潜入血色黄昏议会，调查他们与卡厄斯的秘密协议。奖励：暗影斗篷'}
+,{id:'q09',name:'太阳之井净化',rank:'ss',cat:'quest',source:'原创',elements:['light','fairy'],desc:'净化被天灾军团污染的太阳之井，恢复血精灵的力量源泉。奖励：太阳之井精华'}
+,{id:'q10',name:'废土水源',rank:'s',cat:'quest',source:'原创',elements:['water','steel'],desc:'为亚特兰大要塞寻找新的净水来源。废土中水源就是命脉。奖励：净水芯片'}
+,{id:'q11',name:'精灵内战调解',rank:'s',cat:'quest',source:'原创',elements:['fairy','grass'],desc:'调停暗夜精灵与高等精灵延续千年的争端。外交比战争更难。奖励：精灵友好'}
+,{id:'q12',name:'蛛魔遗迹',rank:'s',cat:'quest',source:'原创',elements:['dark','ghost'],desc:'深入地底界探索远古蛛魔遗迹，寻找失落的暗影魔法。奖励：蛛魔法术'}
+,{id:'q13',name:'燃烧军团残党',rank:'a',cat:'quest',source:'原创',elements:['fire','dark'],desc:'清除在海加尔山残留的燃烧军团势力。战争虽然结束了，但恶魔还没有。奖励：邪能水晶'}
+,{id:'q14',name:'命运之轮',rank:'legend',cat:'quest',source:'原创',elements:['psychic','fairy'],desc:'寻找克洛诺斯的命运之轮，窥探远古预言的真相。你会相信命运吗？奖励：预言碎片'}
+,{id:'q15',name:'废土商路',rank:'a',cat:'quest',source:'原创',elements:['steel','normal'],desc:'护送商队穿越危险的废土地带，击退掠夺者。奖励：废土币'}
+,{id:'q16',name:'达拉然飞升',rank:'ss',cat:'quest',source:'原创',elements:['psychic','fairy'],desc:'协助达拉然完成第三次飞升仪式，将城市升至更高空域。奖励：肯瑞托徽章'}
+,{id:'q17',name:'暗影议会覆灭',rank:'ss',cat:'quest',source:'原创',elements:['dark','fighting'],desc:'攻入暗影议会总部，消灭古尔丹的残党。这是复仇，也是正义。奖励：暗影之力'}
+,{id:'q18',name:'兽人救赎之路',rank:'s',cat:'quest',source:'原创',elements:['fighting','ice'],desc:'帮助霜狼氏族摆脱恶魔之血的诅咒，找回兽人的荣耀。奖励：霜狼徽记'}
+,{id:'q19',name:'七国盟约',rank:'ss',cat:'quest',source:'原创',elements:['light','steel'],desc:'在新的危机面前，重新凝聚七大王国的力量，签订新盟约。奖励：联盟统帅印'}
+,{id:'q20',name:'混沌终焉',rank:'legend',cat:'quest',source:'原创',elements:['dark','psychic','fire'],desc:'直面混沌之神卡厄斯的本体，完成创世之战未竟的使命。奖励：创世之力'}
+,{id:'q21',name:'宝可梦联盟挑战',rank:'a',cat:'quest',source:'宠物小精灵',elements:['normal','electric'],desc:'挑战四天王和冠军，成为宝可梦大师！旅行的终点也是起点。奖励：联盟冠军奖杯'}
+,{id:'q22',name:'地下城探险',rank:'a',cat:'quest',source:'原创',elements:['dark','steel'],desc:'探索未知地下城的宝藏和秘密，每一层都更危险也更诱人。奖励：随机传说装备'}
+,{id:'q23',name:'世界树危机',rank:'ss',cat:'quest',source:'原创',elements:['grass','fairy'],desc:'世界树的根脉被虚空侵蚀，必须深入地底净化源头。奖励：世界树之叶'}
+,{id:'q24',name:'星界之门',rank:'legend',cat:'quest',source:'原创',elements:['psychic','fairy'],desc:'打开通往星界的大门，与诸神的残魂对话，获取终极力量的线索。奖励：星界钥匙'}
+,{id:'q25',name:'末日钟声',rank:'ss',cat:'quest',source:'原创',elements:['dark','fire'],desc:'魔多的末日钟声敲响，索伦正在积蓄力量。必须在最终之战前做好一切准备。奖励：刚铎之剑'}
+,{id:'q26',name:'矮人远古熔炉',rank:'a',cat:'quest',source:'原创',elements:['steel','fire'],desc:'寻找传说中的远古熔炉，据说那里能锻造出超越秘银的神秘金属。奖励：远古锻造图'}
+,{id:'q27',name:'暗夜巡逻',rank:'b',cat:'quest',source:'原创',elements:['dark','normal'],desc:'在城镇周围巡逻一整夜，击退来犯的小股怪物。新手冒险者的常见任务。奖励：微薄报酬'}
+,{id:'q28',name:'商会护送',rank:'b',cat:'quest',source:'原创',elements:['normal','steel'],desc:'护送商会车队安全抵达目的地。路途中有强盗和野兽的威胁。奖励：商会折扣'}
+,{id:'q29',name:'草药采集',rank:'c',cat:'quest',source:'原创',elements:['grass','normal'],desc:'采集指定的草药交给炼金师。简单但枯燥，是学徒的日常。奖励：少量金币'}
+,{id:'q30',name:'哥布林巢穴',rank:'b',cat:'quest',source:'原创',elements:['dark','fighting'],desc:'清剿附近山洞中的哥布林巢穴，保护村庄的安全。奖励：哥布林战利品'}
+,
+  {id:'h41',name:'莉拉·烬脉',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['fire', 'dark', 'steel'],desc:'被山炉氏族放逐的矮人符文匠师。她研究了禁忌的「虚烬符文」，手指被虚空能量染成了灰烬色。性格执拗，说话像锤击铁砧。在翡翠海沿岸游荡，寻找「烬名」留下的真实记录。专属技能：虚烬刻印（给武器附加虚空伤害），真名低语（与烬名残响对话）。'},
+  {id:'m126',name:'灰烬监视者',rank:'ss',cat:'monster',source:'FantasyForge原创',elements:['dark', 'fire', 'steel'],desc:'远古矮人诸神设下的符文狱卒。四臂构造体，体表刻满封印符文，核心是一颗跳动的灰烬之心。战斗机制：第一阶段用符文锁链束缚玩家；第二阶段进入「相位切换」，免疫物理伤害；第三阶段自爆终结技「灰烬风暴」。掉落：监视者核心（莉拉专属锻造材料）。背景暗线：它到底是狱卒还是钥匙守卫？'},
+  {id:'w136',name:'虚烬拳铠',rank:'legend',cat:'weapon',source:'FantasyForge原创',elements:['fire', 'dark'],desc:'用灰烬监视者核心锻造的传说级手部装备。左手拳铠刻有虚烬符文，右手拳铠嵌有监视者之眼。核心机制：虚烬技能减免30%，虚空伤害追加点燃效果。需要莉拉·烬脉在队伍中才能解锁锻造。装备后角色手掌会呈现灰烬色纹路。'},
+  {id:'q31',name:'遗忘熔炉',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['fire', 'dark', 'steel'],desc:'5人精英副本，位于山炉氏族裂渊底层。核心机制「记忆侵蚀」：玩家进入后每秒遗忘一个技能，需在完全失能前击败BOSS。四阶段推进：灰烬回廊（小怪阶段）→ 记忆熔池（中场机制，玩家互换技能）→ 无名圣所（P2，BOSS抽取玩家技能条）→ 核心炉膛（P3，烬名·虚烬之主登场）。推荐等级：60+。掉落：烬名之心（传说副手）、真名碎片（任务物品）。'},
+  {id:'h42',name:'烬名·虚烬之主',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['fire', 'dark', 'light'],desc:'遗忘熔炉最终BOSS。千年前被矮人诸神用遗忘熔炉焚烧名字的神，化为没有名字的虚无存在，但仍保留着神性。三阶段战斗：第一阶段「名之剥夺」（随机剥除玩家1个技能）；第二阶段「真名低语」（全屏AOE，莉拉专属选择分支：接受真名→获得额外宝箱，拒绝→BOSS狂暴）；第三阶段「虚烬爆发」（全屏秒杀技，需躲入记忆熔池残影）。掉落：烬名之心（传说副手，持有时可听懂虚烬符文）。'},
+  {id:'h43',name:'锻忆者·多尔甘',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['fire', 'steel', 'dark'],desc:'遗忘熔炉中BOSS，原山炉氏族记忆铭刻师。因私自研究并复制烬名焚烧技术，被诸神改造为遗忘熔炉的永生守卫。三阶段战斗：P1「记忆抽取」（每30秒随机复制一名玩家技能并反制）；P2「残渣溢出」（场地充满灰烬AOE）；P3「真名碎裂」（场地碎裂，玩家需跳至浮石）。莉拉专属互动：可在P3用虚烬符文重写多尔甘的真名，使其短暂恢复理智并反向攻击熔炉核心。掉落：断裂铭刻锤（传说锤类武器）、真名碎片（集齐5枚开启「山炉真相」主线第三章）。'},
+  {id:'f20',name:'山炉氏族',rank:'ss',cat:'faction',source:'FantasyForge原创',elements:['fire', 'steel'],desc:'矮人诸神之下最强大的氏族，掌握「记忆铭刻」技术——可以将名字和记忆刻入钢铁，永不遗忘。氏族内部因「遗忘熔炉」真相分裂为三派：铁砧派（维持封印/隐瞒真相，领袖：石律·铁砧）、裂焰派（追查真相，领袖：铜言·裂焰——莉拉的旧导师）、沉默派（等待真名预言应验）。裂渊之下沉睡着被诸神封印的「遗忘熔炉」，炉火永不熄灭。暗线：矮人诸神焚烧「烬名」时，其名字残渣渗入炉壁，使熔炉产生了自我意识。'},
+  {id:'h44',name:'石律·铁砧',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['steel', 'dark'],desc:'山炉氏族铁砧派领袖，现任氏族长老会首席。坚持维持对遗忘熔炉的封印，认为真相会导致矮人文明崩溃。在「裂壁之议」事件中被铜言·裂焰公开审判，被判有罪。终极秘密：他早在30年前就知道「门正在变宽」，但选择隐瞒——因为他相信矮人还没有准备好面对界外之境。战斗风格：重型铭刻锤，能实时改写战场上的符文效果。'},
+  {id:'h45',name:'铜言·裂焰',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['fire', 'light', 'steel'],desc:'山炉氏族裂焰派领袖，莉拉·烬脉的旧导师。因追查遗忘熔炉真相被石律放逐，实则这是保护——铜言在外可以不受氏族规矩束缚地调查。在「裂壁之议」中公开了石律隐瞒「门正在变宽」的证据，导致铁砧派倒台。性格：说话像熔岩流淌，慢但不可阻挡。专属技能：裂焰铭文（给武器附加真实伤害，无视护甲）。与莉拉的重逢将触发「山炉真相」主线第三章。'},
+  {id:'w137',name:'烬名之心',rank:'legend',cat:'weapon',source:'FantasyForge原创',elements:['fire', 'dark', 'light'],desc:'遗忘熔炉最终BOSS烬名·虚烬之主掉落的传说副手。外形是一颗跳动的灰烬色心脏，握在手中能听到烬名的低语。效果：持有者可以听懂虚烬符文；虚空/火焰技能伤害+50%；但每60秒会强制触发一次「名之剥夺」（随机丢失1个技能，持续30秒）。可在莉拉·烬脉处升级为「烬名之心·真名版」（消除副作用）。'},
+  {id:'w138',name:'断裂铭刻锤',rank:'ss',cat:'weapon',source:'FantasyForge原创',elements:['fire', 'steel'],desc:'锻忆者·多尔甘掉落的传说锤类武器。锤头从中断裂，用虚烬符文重新粘合，挥舞时会留下灰烬轨迹。效果：攻击有30%概率「铭刻」目标（使其3秒内受到的伤害+20%）；对矮人护甲有额外破防效果。背景：这是多尔甘还是记忆铭刻师时使用的工具，断裂于他被改造的那一刻。'},
+  {id:'q32',name:'山炉真相·第三章',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['fire', 'dark', 'light'],desc:'需要集齐5枚「真名碎片」（锻忆者·多尔甘掉落）开启的主线任务链。任务流程：① 返回山炉氏族，发现裂渊已被封死；② 寻找铜言·裂焰，得知进入裂渊需要「虚烬符文」钥匙；③ 与莉拉·烬脉合作，重铸虚烬符文；④ 进入裂渊底层，发现遗忘熔炉的真实功能——它不只焚烧名字，还在「培育」新的名字；⑤ 最终抉择：摧毁熔炉（导致矮人失去记忆铭刻能力）/ 接管熔炉（成为新的记忆之神）/ 释放烬名（未知后果）。'},
+  {id:'c19',name:'界外之境',rank:'legend',cat:'city',source:'FantasyForge原创',elements:['dark', 'ghost'],desc:'「门」的另一侧，名字被焚烧后去往的世界。三层结构：第一层「灰滩」——被遗忘名字的残渣形成的沙地，无边无际；第二层「堆名之城」——名字变成砖石，自动构建出一座活体城市，城墙会低语；第三层「无名王座」——界外之境的核心，坐上去的人会失去所有名字，化为虚无。核心势力：「无名者议会」七位残响。暗线：门变宽的真正原因是界外之境在「反向扩张」——遗忘熔炉烧掉的名字在界外重组成了新的存在。'},
+  {id:'c20',name:'灰滩',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['dark', 'ground'],desc:'界外之境第一层。地面是灰色的细沙，每走一步都会下沉少许，仿佛大地在缓慢吞噬一切。沙粒实际上是被完全遗忘的名字残渣——没有人记得它们，它们也没有形状。周常事件：「种者」在此播种「遗忘之种」，玩家需在种子发芽前将其摧毁。特殊机制：在灰滩上使用任何「呼唤名字」的技能都会失败（名字在这里没有意义）。'},
+  {id:'c21',name:'堆名之城',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['dark', 'ghost', 'steel'],desc:'界外之境第二层。被遗忘的名字化为砖石，自动堆砌成一座不断变化的活体城市。城墙会低语（听到自己名字的人会陷入疯狂），街道布局每小时重组一次。核心NPC：「无名者议会」的七位残响在此居住。特殊机制：如果你在城中说出某个被遗忘的名字，对应的砖石会发光并短暂恢复人形——这是拯救被遗忘者的唯一方法，但需要付出「忘记自己名字」的代价。'},
+  {id:'c22',name:'无名王座',rank:'legend',cat:'city',source:'FantasyForge原创',elements:['dark', 'light', 'ghost'],desc:'界外之境第三层，核心中的核心。一把空着的王座，由纯白色的骨骼和黑色符文石交错构成。坐上去的人会立即失去自己的名字——不是被遗忘，而是名字本身回归界外之境的本源。守门者与无名王座的关系：守门者就是当年主动走出王座的人，他选择成为「没有名字的守卫」，用永生来阻止其他人坐上王座。终极抉择：走进去（世界崩塌）/ 留在外面（门继续变宽）/ 引路灯的第三条路（未解锁）。'},
+  {id:'f21',name:'无名者议会',rank:'legend',cat:'faction',source:'FantasyForge原创',elements:['dark', 'ghost', 'psychic'],desc:'界外之境的核心势力，由七位「残响」组成。他们曾经是有名字的存在，被诸神焚烧名字后落入界外之境，逐渐失去了自我但保留了力量的残响。七位残响：铸者（重塑身体的能力）、织者（编织被遗忘的记忆）、记者（记录界外发生的一切）、画者（将被遗忘的名字画成肖像）、唱者（用歌声维持界外的稳定）、种者（在灰滩播种遗忘之种）、守者（第七位，尚未登场）。与守门者构成镜像关系：守门者在外面守门，议会在里面守王座。'},
+  {id:'m127',name:'种者·第六无名者',rank:'legend',cat:'monster',source:'FantasyForge原创',elements:['dark', 'grass', 'ghost'],desc:'界外之境周常世界BOSS，无名者议会第六位残响。外形：人形，但身体由灰烬和遗忘之种的根须交织而成，脸部没有五官，只有一个不断开合的嘴巴。核心机制「遗忘之种」：种者在场地四个角落播种，种子会随时间发芽（发芽后全屏AOE）；玩家需在发芽前用火焰技能烧毁种子。三阶段：P1「播种」（种者召唤3颗种子）；P2「疯长」（种子发芽速度翻倍，场地出现根须陷阱）；P3「收割」（种者吸收所有未摧毁的种子，全属性暴涨，但身体出现3秒脆弱窗口）。掉落：遗忘之种·萌芽（开启引灯人世界任务线）。与引路灯有特殊互动剧情。'},
+  {id:'h46',name:'守门者',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['dark', 'light', 'steel'],desc:'按了三千年的门的人。他原本是无名王座的候选人，但在走进去的瞬间选择了回头，用身体堵住了门——这一堵就是三千年。没有名字（名字在回头那一刻自动焚毁），没有记忆（记忆在门外消散），只有一项使命：不让任何人走进无名王座。与无名者议会是镜像关系：议会想让他走进去（这样王座就能完成），他拒绝。战斗机制：守门者无法被击败（他是世界观存在，不是战斗单位），但可以与玩家对话，根据玩家选择触发不同世界观分支。关键台词：「你来了。名字带来了吗？」'},
+  {id:'h47',name:'引路灯',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['light', 'fire', 'ghost'],desc:'第三条路的探索者。引路灯原本是堆名之城中的一个普通砖石（某个人被遗忘的名字），因一个玩家的呼唤而短暂恢复了人形，从此拥有了「记住自己名字」的能力（在界外之境中独一无二）。能力：可以在灰滩上「点亮」被遗忘的名字，使其短暂恢复形状（10秒）。世界任务线「引灯之路」：收集7颗「遗忘之种·萌芽」，在无名王座前点燃引路灯，开启第三条路——不是摧毁门，也不是走进去，而是让门两边的 worlds 重新建立连接。与种者有特殊互动：种者看到引路灯会停止攻击，低语「你回来了」。'},
+  {id:'q33',name:'引灯之路',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['light', 'dark', 'fire'],desc:'需要收集7颗「遗忘之种·萌芽」（种者·第六无名者掉落，每周限1颗）的世界任务线。任务流程：① 在灰滩找到引路灯（随机刷新）；② 用引路灯点亮灰滩上的7个「被遗忘的名字」（每个需要击败一波守护幽灵）；③ 进入堆名之城，说服无名者议会（需完成每个残响的专属挑战）；④ 最终在无名王座前点燃引路灯，触发终极抉择：第三条路（门两边重建连接）/ 摧毁门（世界隔离）/ 走进王座（世界崩塌）。完成第三条路将解锁「守者」相关剧情（第七无名者）。'},
+  {id:'q34',name:'炉火审判',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['fire', 'light', 'dark'],desc:'山炉氏族裂壁之议的最终事件。铜言·裂焰在氏族长老会公开了石律·铁砧隐瞒「门正在变宽」的证据，触发全氏族投票审判。审判地点：山炉氏族的「炉心大殿」，中央是一盆永不熄灭的 ancestral 炉火。审判机制：每位长老需将手伸入炉火中「以记忆起誓」——说谎者的记忆会被焚烧（永久失去某段记忆）。石律在审判最后坦白了终极秘密：门正在变宽，不是因为封印松动，而是因为界外之境在反向扩张。后果：山炉氏族分裂，铁砧派倒台，铜言派掌权，但此时「门」已经宽到可以同时容纳两个人并行了。'},
+  {id:'t86',name:'虚烬刻印',rank:'ss',cat:'talent',source:'FantasyForge原创',elements:['fire', 'dark'],desc:'莉拉·烬脉专属天赋。给武器附加虚烬符文，使攻击附加「虚空燃烧」效果（每秒造成最大生命值2%的伤害，持续5秒，可叠加3层）。副作用：每次触发虚烬刻印，莉拉会永久失去一个随机技能（实际效果：该技能进入冷却，冷却时间=永久）。可在铜言·裂焰处重置刻印（需要完成「山炉真相」第三章）。'},
+  {id:'t87',name:'真名低语',rank:'ss',cat:'talent',source:'FantasyForge原创',elements:['dark', 'psychic'],desc:'与烬名·虚烬之主战斗时的专属机制天赋。BOSS进入P2时，所有玩家会听到「真名低语」（全屏提示）。莉拉·烬脉玩家需做出选择：接受真名（获得烬名的力量，全属性+30%，但战斗结束后该角色将被「标记」，下次进入遗忘熔炉时BOSS难度翻倍）/ 拒绝真名（BOSS进入狂暴模式，全伤害+50%，但击败后掉落额外宝箱「烬名的谢礼」）。非莉拉玩家无法看到此选择（世界观隔离）。'},
+  {id:'s45',name:'记忆侵蚀',rank:'ss',cat:'skill',source:'FantasyForge原创',elements:['dark', 'psychic'],desc:'遗忘熔炉副本核心机制技能（环境技能，非玩家技能）。进入熔炉后，所有玩家每秒钟会被侵蚀1个技能（随机丢失，持续30秒，可叠加）。应对方法：在副本中找到「记忆熔池」，跳入其中可随机恢复1个被侵蚀的技能（但有50%概率恢复的是敌人的技能）。莉拉·烬脉在队时，可用虚烬刻印保护最多2个技能不被侵蚀。'},
+  {id:'s46',name:'名之剥夺',rank:'legend',cat:'skill',source:'FantasyForge原创',elements:['dark', 'ghost'],desc:'烬名·虚烬之主专属技能（BOSS机制）。随机剥除一名玩家的一个技能（永久，直到战斗结束或玩家死亡重置）。P2时变成「双重剥夺」（每次剥除2个技能）。应对方法：被剥夺的技能会出现在BOSS身上（玩家可以看到BOSS技能栏多了一个图标），击杀对应图标颜色的小怪可夺回技能。莉拉·烬脉可逆转此效果（需要消耗1枚真名碎片）。'}
+,
+{id:'h48',name:'守者·第七无名者',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['dark','ghost','light'],desc:'无名者议会第七位残响，也是最危险的一位。与其他六位不同，守者从未失去自己的名字——他是主动走进界外之境的。三千年前，他是守门者的孪生兄弟，在守门者选择回头堵门的那一刻，他选择了走进无名王座。但王座拒绝了他：它只接受「失去名字的人」，而守者太强大，名字烧不尽。于是守者带着半焚的名字在界外之境游荡了三千年，成为唯一一个「记得自己名字」的界外存在——直到引路灯出现。守者的目标：完成王座仪式，让界外之境与主物质界彻底融合。关键台词：「哥哥堵住了门。但门，本来就不该存在。」'},
+{id:'m128',name:'残响之影',rank:'ss',cat:'monster',source:'FantasyForge原创',elements:['dark','ghost','psychic'],desc:'无名者议会残响的投影分身，在堆名之城中游荡。当玩家在堆名之城说出被遗忘的名字时，对应的残响之影会被激活并攻击玩家。每种残响之影有不同的战斗风格：铸者之影会重塑地形、织者之影会编织记忆陷阱、记者之影会复制玩家的技能记录并反制、画者之影会创造虚假的友军幻象、唱者之影会用AOE音波攻击。击败残响之影是「引灯之路」任务线的必经环节，掉落：残响碎片（7枚可合成一把钥匙开启议会密室）。'},
+{id:'q35',name:'双生对峙',rank:'legend',cat:'quest',source:'FantasyForge原创',elements:['dark','light','ghost'],desc:'守者·第七无名者降临灰滩的事件任务。触发条件：完成「引灯之路」并选择第三条路后，守者从界外之境深处走出，与守门者面对面——三千年后的重逢。事件机制：守门者站在门内，守者站在门外，玩家站在中间。守者试图拉守门者离开门（这样门就会完全敞开），守门者请求玩家帮他守住。三个阶段：P1「记忆洪水」（守者释放三千年积攒的记忆碎片，玩家需在记忆洪流中保持自我）；P2「真名对轰」（守者用半焚的名字攻击，守门者用没有名字的虚无防御，玩家需选择帮助哪一方）；P3「门的选择」（门本身开始说话——它是活的，千年来一直在听守门者的心跳）。结局分支由玩家P2的选择决定。'},
+{id:'q36',name:'遗忘之种·深渊',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['dark','grass','fire'],desc:'引灯之路的后续周常副本。种者·第六无名者死后，遗忘之种失去控制，在灰滩地下疯长出一片「深渊森林」。副本机制：森林中的每棵树都是一个被遗忘名字的实体化，攻击树会触发「名字回响」（全屏精神伤害）。核心BOSS：野生遗忘之树（传说级），它是一颗长出王座形状树根的巨大枯树，树根深入无名王座。击败后掉落：烬丝碎片（收集5枚可触发「唤醒烬丝」事件）。隐藏机制：如果莉拉·烬脉在队，她可以在枯树前使用虚烬刻印，让枯树短暂说出自己的名字——这将触发隐藏BOSS「原名者」。'},
+{id:'m129',name:'原名者',rank:'legend',cat:'monster',source:'FantasyForge原创',elements:['fire','dark','psychic'],desc:'隐藏BOSS，遗忘之种·深渊副本的隐藏挑战。原名者是界外之境中第一个被焚烧名字的存在——比烬名更早，甚至比矮人诸神更古老。它已经完全失去了形状，只剩下一段不断重复的音节（这就是它名字的残响）。战斗机制：原名者没有实体，它存在于每颗遗忘之树中，玩家需要同时点燃场地中5颗特定树木才能让它显形。显形后只有10秒输出窗口，但伤害极高（一击必杀级别）。如果10秒内未击败，原名者会重新隐入树木，全场树木AOE，需要重新寻找。掉落：原名残响（传说材料，与烬名之心合成可制作「真名之瞳」）。'},
+{id:'w139',name:'真名之瞳',rank:'legend',cat:'weapon',source:'FantasyForge原创',elements:['fire','dark','light','psychic'],desc:'原名残响 + 烬名之心合成而成的终极传说副手。外形：一只半透明的灰色眼球，瞳孔中燃烧着微弱的灰烬火焰。效果：①「真名视界」——佩戴者可以看到一切隐藏名字的存在（包括守门者的原名、无名者议会七位残响的真名）；②「名之审判」——主动技能，对目标造成其最大生命值15%的真实伤害（CD 120秒），如果目标是「失去名字的存在」则伤害翻倍；③ 佩戴者在界外之境不再受「名字无效」机制影响。副作用：佩戴者每24小时必须「说出一个名字」（可以是NPC的名字），否则真名之瞳会吞噬佩戴者自己的一个技能。'},
+{id:'w140',name:'遗忘之种·萌芽',rank:'ss',cat:'weapon',source:'FantasyForge原创',elements:['dark','grass','fire'],desc:'种者·第六无名者掉落的任务物品/副手武器。外形：一颗灰色的种子，表面有细微的根须在缓慢蠕动，放在手中会感到微弱的脉动。作为副手：攻击有10%概率在目标位置种下一颗遗忘之种（3秒后发芽，造成范围暗属性伤害）。作为任务物品：收集7颗可在无名王座前点燃引路灯。与引路灯同时装备时触发特殊对话：引路灯会低语「它在发芽……我也想发芽」。'},
+{id:'t88',name:'残响共鸣',rank:'ss',cat:'talent',source:'FantasyForge原创',elements:['dark','ghost','psychic'],desc:'引路灯专属天赋。在界外之境中，引路灯可以与无名者议会的残响产生共鸣。每击败一个残响之影，引路灯获得一个「残响位」（最多7个）。每个残响位提供不同被动效果：铸者+10%护甲、织者+10%精神抗性、记者+15%经验获取、画者+5%暴击率、唱者+10%AOE伤害、种者+20%对植物系伤害、守者（空位，需完成双生对峙后解锁）。集齐7个残响位触发隐藏效果：「议会之座」——引路灯短暂获得等同于一位无名者的力量（持续30秒，CD 600秒）。'},
+{id:'s47',name:'门之低语',rank:'legend',cat:'skill',source:'FantasyForge原创',elements:['dark','light','ghost'],desc:'双生对峙事件中的核心机制技能。当守者与守门者对峙时，门本身开始低语——三千年来，它一直在听守门者的心跳，它产生了意识。门之低语有三个选项，对应三种结局：①「永远关闭」（守门者牺牲自己永封此门，门外的世界与门内的世界永远隔离，界外之境的扩张停止，但所有在界外的人永远无法回来）②「完全敞开」（守者走入王座完成仪式，两界融合，所有被遗忘的名字同时恢复，但世界将因信息过载而崩溃）③「门变桥」（引路灯的第三条路——门不再关闭也不完全打开，而是变成一座桥，被遗忘的名字可以自由来去，但这意味着界外之境将永远存在于主物质界旁边）。此技能不可习得，仅在世界事件中使用。'},
+{id:'s48',name:'烬丝编织',rank:'ss',cat:'skill',source:'FantasyForge原创',elements:['fire','dark','psychic'],desc:'遗忘熔炉隐藏机制技能。在遗忘熔炉副本中，如果队伍中有人持有「烬名之心」，在P3阶段会出现隐藏的第四阶段「烬丝」。烬丝是烬名被焚烧的名字残渣中最后一条完整的丝线——它不是名字的碎片，而是名字的「结构」。使用烬丝编织：玩家可以从烬名的心脏中抽出一根灰烬色丝线，用它编织一个全新的名字。编织的名字会赋予目标一个随机传说级增益（持续到副本结束）。但如果编织失败（概率30%），丝线断裂，烬名进入超狂暴模式（全属性+200%）。烬丝是「唤醒烬丝」事件的铺垫——只有同时集齐7根烬丝，才能在界外之境中重新编织烬名的真名。'},
+{id:'q37',name:'唤醒烬丝',rank:'legend',cat:'quest',source:'FantasyForge原创',elements:['fire','dark','light','psychic'],desc:'终极世界事件的前置任务。触发条件：收集7根烬丝（遗忘熔炉隐藏P4产出，每周限1根）+ 持有真名之瞳 + 完成双生对峙。任务流程：① 在灰滩找到引路灯，用真名之瞳照亮灰滩深处——发现灰滩之下还有第四层：「名之本源」；② 名之本源是一个由无数名字丝线构成的虚无空间，所有被焚烧的名字都从这里产生；③ 在名之本源中心找到烬名的真名碎片（7根烬丝自动编织）；④ 编织完成后，烬名的真名短暂恢复5秒——在这5秒内，玩家可以选择：将真名归还烬名（烬名复活，但以什么形态回归未知）/ 将真名编织进引路灯（引路灯获得神性，成为新的界外之境守护者）/ 将真名交给守门者（守门者恢复名字和记忆，但可能不再愿意守门）。此任务为赛季终极事件的前置，完成后解锁「诸名之战」。'},
+{id:'p21',name:'记忆铭刻药剂',rank:'ss',cat:'potion',source:'FantasyForge原创',elements:['fire','steel','psychic'],desc:'山炉氏族独家配方，铜言·裂焰在裂壁之议后公开的秘药。效果：饮用后5分钟内免疫「记忆侵蚀」和「名之剥夺」效果，且所有技能冷却时间缩短20%。副作用：药效结束后，饮用者会随机遗忘一个NPC的名字（持续1小时，期间无法与该NPC交互）。制作材料：真名碎片x1 + 矮人烈酒x3 + 灰烬监视者核心碎片x1。背景：这是山炉氏族记忆铭刻技术的民用化版本——原本只有长老才能使用。'},
+{id:'c23',name:'名之本源',rank:'legend',cat:'city',source:'FantasyForge原创',elements:['dark','light','psychic','fire'],desc:'界外之境的隐藏第四层，位于灰滩之下。这里没有地面，只有无数灰烬色的丝线在虚空中编织、断裂、重组——每一条丝线都是一个名字的「结构」。名之本源不是被创造出来的，它是「名字」这个概念本身存在的地方。当诸神焚烧一个名字时，名字不会消失，只会回到这里变成丝线。当有人被命名时，丝线会从这里抽出，编织成新的名字。暗线：遗忘熔炉烧名字→丝线回到名之本源→种者在灰滩用丝线播种→界外扩张。整个暗线的最终闭环：名字不灭，只是被重新编织。'}
+
+,
+{id:'h49',name:'诸名之神·未生者',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['dark','light','psychic','fire'],desc:'诸名之战终极BOSS。它不是一个人，而是一个「概念」——所有曾经存在、现在存在、将来存在的名字的总和。外形：一团不断变换形态的光与暗的漩涡，中心是一张永远在说话的嘴，说出的每个字都会变成一个实体的名字。它原本沉睡在名之本源最深处，被遗忘熔炉三千年的焚烧声慢慢唤醒。当烬丝被重新编织时，未生者彻底苏醒。战斗机制：五阶段循环——P1「命名」（未生者给场上每个实体随机命名，被命名的实体获得新属性和攻击方式）；P2「失名」（未生者吞噬场上一半实体的名字，使其变为中立）；P3「重生」（被吞噬名字的实体以全新形态复活）；P4「真名」（未生者说出自己的真名——没有真名，它本身就是名字的概念）；P5「虚无」（未生者化为纯粹的概念，无法被物理攻击命中，只有「说出一个名字」才能对它造成伤害）。击败方式：不是打败它，而是给它一个「定义」——玩家需要在战斗中用7根烬丝编织一个名字给未生者，让它从一个无限的概念变成一个有限的存在。'},
+{id:'q38',name:'诸名之战',rank:'legend',cat:'quest',source:'FantasyForge原创',elements:['dark','light','fire','psychic'],desc:'赛季终极世界事件。触发条件：全服累计完成「唤醒烬丝」100次。事件分为四个阶段，全服玩家共同推进。第一阶段「名潮」——名之本源的丝线大量溢出，主物质界所有NPC的名字开始闪烁，每10分钟随机一个NPC失去名字（变成空白NPC，无法交互），玩家需要用记忆铭刻药剂稳定；第二阶段「双生」——守者与守门者在门前的对峙升级为战争，守者率领残响之影大军攻门，守门者独守，玩家需选择阵营；第三阶段「桥成」——如果第三条路（门变桥）的进度超过60%，引路灯在桥上点燃，所有被遗忘的名字开始双向流动，界外之境与主物质界短暂连通；第四阶段「诸名」——未生者苏醒，全服BOSS战。全服需在72小时内击败未生者，否则世界重置（赛季结束，所有原创剧情实体暂时消失，等待下赛季重新解锁）。'},
+{id:'q39',name:'三千年前·双生祭',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['fire','dark','light'],desc:'守者与守门者的前史任务。触发条件：同时拥有真名之瞳 + 与守门者对话3次。任务流程：① 守门者在第三次对话中说出自己的原名——「烬守」（三千年前他还是一个有名字的矮人）；② 回溯记忆：三千年前，矮人诸神决定焚烧烬名，需要两个祭品——一个走入王座完成仪式，一个留在门外永远看守。烬守和他的孪生兄弟烬行被选中；③ 烬行主动走进王座，但王座无法焚烧他的名字（他太强大），于是他带着半焚的名字被踢出界外之境，成为守者；④ 烬守看到兄弟被拒绝后，本可以离开，但他选择留下堵门——因为他知道烬行一定会回来；⑤ 真相：守门者不是诸神指派的，他是自愿的。他不是在守门，他在等他的兄弟。任务奖励：烬守的铭刻（传说饰品，佩戴者可以在界外之境呼唤守门者的原名，触发一次全队护盾）。'},
+{id:'h50',name:'烬守',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['steel','dark','light'],desc:'守门者的原名与真身。三千年前的矮人战士，本名烬守，与孪生兄弟烬行同为山炉氏族的精英铭刻师。当矮人诸神焚烧烬名时，需要两个人作为封印的锚点——一个走进王座，一个守在门外。烬行走进去，但王座无法焚烧他。烬守看到兄弟被弹出，意识到门会一直被冲击，于是他选择自己成为门的锁——用自己的名字作为钥匙，把名字交给了门，从此门只认他一个人的心跳。三千年后，当玩家用真名之瞳看穿他的虚无，他终于能说出自己的名字。但说出名字的瞬间，门也会认出他——如果门知道守门者有名字，它可能不再需要他。烬守的终极困境：他必须是无名的，才能守住门。'},
+{id:'h51',name:'烬行',rank:'legend',cat:'hero',source:'FantasyForge原创',elements:['fire','dark','psychic'],desc:'守者的原名与真身。三千年前的矮人铭刻师，烬守的孪生兄弟。与谨慎的烬守不同，烬行性格激进，他相信「名字是力量，不是枷锁」。当诸神选中两人时，烬行毫不犹豫地走进王座——不是为了牺牲，而是为了获取力量。但王座无法焚烧他的名字，因为他的名字太「重」——他把自己的名字刻在了骨髓上，不是铭刻在钢铁上，而是铭刻在自己的存在本身。被踢出界外之境后，烬行花了三千年研究名之本源，最终得出结论：门不应该存在。名字应该在两个世界之间自由流动。他不是要毁灭世界，他要打破隔离。与引路灯的关系：烬行是第一个发现引路灯存在的人，他在灰滩上看到一块砖石突然发光——那一刻他知道，有人在外面呼唤名字。'},
+{id:'f22',name:'双生铭刻团',rank:'ss',cat:'faction',source:'FantasyForge原创',elements:['steel','fire','dark'],desc:'三千年前的矮人精英团体，由烬守和烬行兄弟共同创立。他们的铭刻技术超越山炉氏族正统——不是把名字刻入钢铁，而是把名字刻入「存在的结构本身」。这种技术被称为「骨铭」，直接将名字编织进存在的基本纤维。骨铭的代价：使用者与被铭刻的对象永远绑定，无法分离。双生铭刻团的12名成员全部参与了焚烧烬名的仪式，其中10人被遗忘熔炉彻底焚烧（连灰烬都没留下），只有烬守和烬行因为骨铭而残存。暗线：骨铭技术至今仍存在于名之本源的丝线中——每当有人被命名，丝线的编织方式就是骨铭的残余。'},
+{id:'s49',name:'骨铭·存在刻印',rank:'legend',cat:'skill',source:'FantasyForge原创',elements:['steel','dark','psychic'],desc:'双生铭刻团的终极铭刻技术。将名字刻入存在的结构本身，而非钢铁。效果：使用者可以「重命名」任何实体——给怪物命名使其变为友军，给武器命名使其获得新属性，给地点命名改变其地形。代价：每次使用骨铭，使用者自身的一个名字字母被焚烧（名字越短越危险）。当名字的所有字母被焚烧完毕，使用者将永远从所有记忆中消失——不是死亡，是「从未存在过」。烬守只剩一个字「守」，烬行只剩一个字「行」。这就是为什么守门者和守者都只有称号没有名字——他们的名字快被骨铭烧完了。'},
+{id:'w141',name:'骨铭之笔',rank:'legend',cat:'weapon',source:'FantasyForge原创',elements:['steel','dark','psychic'],desc:'双生铭刻团留下的唯一遗物。外形：一支由不知名骨骼制成的刻笔，笔尖永远沾着灰烬色的墨水（实际上是名之本源的丝线液化的产物）。效果：① 持有者可以使用一次骨铭·存在刻印（每次副本CD，不可重置）；② 攻击时10%概率触发「铭刻一击」（对目标施加一个随机名字，改变其一个属性）；③ 在名之本源中，骨铭之笔可以「看见」丝线的编织方式，显示隐藏路径。背景：这支笔是烬守和烬行在焚烧仪式前共同制作的，笔身上刻着两个人的完整名字——三千年来，名字一个字一个字地消失，现在只剩「守」和「行」两个字还在发光。'},
+{id:'m130',name:'名潮涌兽',rank:'ss',cat:'monster',source:'FantasyForge原创',elements:['dark','psychic','water'],desc:'诸名之战第一阶段「名潮」中出现的特殊怪物。当名之本源的丝线大量溢出时，丝线在主物质界凝结成水银状的液体怪物。外形：流动的水银人形，面部不断变换出各种被遗忘的面孔。核心机制「名噬」：每吞噬一个NPC的名字，名潮涌兽的全属性+5%（无上限）。应对方法：在它吞噬NPC前用记忆铭刻药剂保护NPC，或直接用火焰技能蒸发其水银身体（但蒸发后会留下丝线残渣，被其他涌兽吸收）。隐藏弱点：如果玩家对名潮涌兽使用「呼唤名字」类技能，它会短暂停止攻击（3秒），因为它的本能驱使它回应任何名字。'},
+{id:'t89',name:'双生羁绊',rank:'legend',cat:'talent',source:'FantasyForge原创',elements:['steel','dark','fire'],desc:'需要同时拥有骨铭之笔 + 完成三千年前·双生祭任务后解锁。效果：在双生对峙事件中，玩家可以同时看到烬守和烬行的记忆碎片，获得「双重视角」——理解双方的动机后，解锁第四个隐藏选项「双生共守」：烬守和烬行不再对立，而是同时站在门的两侧——一个在界内，一个在界外，用骨铭将两人的名字互相编织进对方的身体。代价：两人永远无法再见面（中间隔着门），但门从此有了两个守卫，一个在里面，一个在外面。这是比「门变桥」更稳定但也更孤独的结局。'},
+{id:'c24',name:'烬名废墟',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['fire','dark','steel'],desc:'三千年前焚烧烬名的仪式发生地，位于遗忘熔炉最深处的最下方。诸名之战第二阶段开放。这里没有熔炉，只有一个巨大的圆形废墟，地面刻满了骨铭符文，中央是一个已经碎裂的王座模型（不是无名王座，是原初王座的复制品）。废墟中回荡着三千年前的声音——烬名被焚烧时的惨叫、烬行走进王座的脚步声、烬守回头时的心跳。特殊机制：在废墟中使用骨铭之笔，可以看到焚烧仪式的完整回放——但每次回放都会消耗骨铭之笔笔身上的一个字母。当笔上只剩「守」和「行」时，回放停止，废墟中央的碎裂王座开始发光。'}
+
+,
+{id:'c25',name:'翡翠海',rank:'s',cat:'city',source:'FantasyForge原创',elements:['water','grass','normal'],desc:'矮人领地东部的巨大内陆海，因水中富含铜矿微粒而呈翡翠色。莉拉·烬脉被放逐后在此沿岸游荡，靠为渔民修理铭刻工具维生。翡翠海海底沉没着一座远古矮人港口城市「铜港」，据说铜港的铭刻工坊至今仍在运转——被遗忘的工匠幽灵每夜锻造着没有人下单的武器。周常事件：铜港幽灵船（水上副本，3人，掉落矮人古董）。特殊NPC：老渔夫·铁须（提供莉拉相关支线任务）。'},
+{id:'c26',name:'山炉氏族裂渊',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['steel','fire','dark'],desc:'山炉氏族的核心领地，一道从地表直通地心的巨大裂谷。裂渊两侧的岩壁上刻满了骨铭符文——这是双生铭刻团三千年前的作品，至今仍在缓慢发光。裂渊共七层：第一层「铁砧厅」（氏族日常区）、第二层「铭刻工坊」（武器锻造区）、第三层「记忆长廊」（存放所有铭刻记录的图书馆）、第四层「长老厅」（氏族决策区）、第五层「裂焰深井」（地热能源区）、第六层「封印走廊」（通往遗忘熔炉的通道，由灰烬监视者巡逻）、第七层「遗忘熔炉」（5人精英副本入口）。裂壁之议后，铁砧厅被铜言派接管，封印走廊对冒险者开放。'},
+{id:'f23',name:'沉默派',rank:'ss',cat:'faction',source:'FantasyForge原创',elements:['dark','psychic'],desc:'山炉氏族三派之一，也是最神秘的一派。他们不关心封印该维持还是该打破，他们只等一件事——「真名预言」应验。真名预言是山炉氏族最古老的铭刻记录：当第七个无名者走出界外之境，当门说出自己的名字，当灰烬重新燃烧——一个新的名字将从遗忘中诞生，这个名字将定义世界的下一个纪元。沉默派不参与氏族政治，他们在裂渊第三层记忆长廊中静坐，逐一研读三千年来的每一份铭刻记录。领袖：无名长老（没有人知道他的名字，因为他把自己的名字铭刻在了裂渊的岩壁上）。暗线：沉默派其实是双生铭刻团的地下延续——他们保存着骨铭技术的完整版本。'},
+{id:'h52',name:'铸者·第一无名者',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','steel','fire'],desc:'无名者议会第一位残响。能力：重塑身体——她可以将灰滩上的名字残渣重新塑造成任何形态。生前是矮人诸神的御用铸造师，被焚烧名字的原因：她为烬名铸造了王座——那个后来成为无名王座的原初王座。诸神认为她帮助了烬名，所以焚烧了她的名字作为惩罚。铸者的执念：她一直在试图重新铸造王座，因为她认为王座的碎裂才是界外之境不稳定的根源。与锻造系统关联：击败铸者之影后解锁「界外铸造」——用界外之境的材料锻造武器，有概率获得独特属性。'},
+{id:'h53',name:'织者·第二无名者',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','psychic','ghost'],desc:'无名者议会第二位残响。能力：编织被遗忘的记忆——她可以将散落在灰滩上的记忆碎片编织成完整的记忆球，让玩家体验被遗忘者的一生。生前是精灵族的记忆守护者，被焚烧名字的原因：她试图用记忆编织技术复活被焚烧的烬名——诸神不允许任何人记住烬名，所以连同她也一起烧了。织者的执念：她在堆名之城的地下编织着一张巨大的「记忆之网」，试图捕捉所有被焚烧名字的回响。与引路灯的互动：引路灯可以在织者的记忆之网上行走，看到所有被遗忘者的记忆。击败织者之影后解锁「记忆回溯」——在堆名之城中查看NPC的前世记忆。'},
+{id:'h54',name:'记者·第三无名者',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','psychic','light'],desc:'无名者议会第三位残响。能力：记录界外发生的一切——她的身体就是一本不断书写的书，每过一天就多一页。生前是人类帝国的皇家史官，被焚烧名字的原因：她记录了焚烧烬名的全部过程——包括诸神不想让人知道的细节。诸神焚烧了她的名字，试图抹去这段历史。但记者的记录不在纸上，在她的身体上，焚烧名字反而让她的身体变成了永恒的记录。记者的执念：她一直在等待有人能读完她身上的全部记录，因为只有被阅读的记录才有意义。击败记者之影后解锁「界外编年史」——一个世界观百科系统，解锁后可以查看所有原创剧情的详细时间线。'},
+{id:'h55',name:'画者·第四无名者',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','fairy','ghost'],desc:'无名者议会第四位残响。能力：将被遗忘的名字画成肖像——她画的不是外貌，而是名字本身的形态。每个名字在她的笔下都有独特的颜色和形状。生前是妖精族的宫廷画师，被焚烧名字的原因：她画了烬名的肖像——那是烬名被焚烧前最后一张画像。诸神无法容忍烬名以任何形式存在，所以连画家一起烧了。画者的执念：她一直在堆名之城的画廊中画画，每画完一幅肖像，被画的名字就会短暂恢复存在（1秒）。她在等待画完最后一幅画——那幅画上将是所有人的名字。击败画者之影后解锁「名之画廊」——一个收集系统，每发现一个被遗忘的名字就在画廊中增加一幅画。'},
+{id:'h56',name:'唱者·第五无名者',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','ghost','fairy'],desc:'无名者议会第五位残响。能力：用歌声维持界外的稳定——她的歌声是界外之境不崩溃的唯一原因。生前是龙族的歌者，被焚烧名字的原因：她在焚烧仪式上唱了一首哀歌——为烬名送行的歌。诸神认为这首歌让烬名的残魂得以存留，于是焚烧了她的名字。但歌声不像名字可以被焚烧——即使她不再记得自己唱的是什么，旋律依然在界外之境回荡。唱者的执念：她一直在唱同一首歌，但她不知道这首歌的歌词是什么——歌词就是她的名字。击败唱者之影后，她会在P2短暂恢复意识，唱出一句歌词（就是她名字的片段），此时全场友军获得30秒无敌。'},
+{id:'c27',name:'炉心大殿',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['fire','steel','light'],desc:'山炉氏族的政治中心，位于裂渊第四层。大殿中央是一盆永不熄灭的始祖炉火——据说是矮人诸神亲手点燃的，三千年从未熄灭。炉心大殿是「炉火审判」的发生地，也是裂壁之议的举办场所。审判机制：每位长老需将手伸入始祖炉火中「以记忆起誓」，说谎者的记忆会被焚烧。大殿四周的墙壁上刻着所有历任氏族长老的名字——但石律·铁砧的名字在审判后被用凿子划掉了。开放后NPC：审判官·铜面（提供每日声望任务，可兑换记忆铭刻药剂配方）。'},
+{id:'s50',name:'记忆熔池',rank:'ss',cat:'skill',source:'FantasyForge原创',elements:['dark','psychic','fire'],desc:'遗忘熔炉副本中的中场机制区域。记忆熔池是遗忘熔炉的自我修复系统——熔炉焚烧名字时产生的残渣会在此处凝结成液态的「记忆之水」。跳入记忆熔池可随机恢复1个被侵蚀的技能，但有50%概率恢复的是敌人的技能（获得一个红色标记的敌对技能，持续30秒，可能对队友造成伤害）。隐藏机制：如果莉拉·烬脉跳入记忆熔池，她可以看到池底有一段完整的铭刻记录——这是烬名被焚烧前最后说的话。这个隐藏信息是解锁遗忘熔炉隐藏P4「烬丝」的必要条件之一。'},
+{id:'c28',name:'灰烬回廊',rank:'s',cat:'city',source:'FantasyForge原创',elements:['dark','fire','steel'],desc:'遗忘熔炉副本第一阶段区域。一条狭长的走廊，两侧墙壁上嵌满了灰烬色的符文石，每块石头上刻着一个被焚烧名字的残片。走廊中游荡着「灰烬游魂」（小怪，被焚烧名字的残存意识，攻击模式简单但数量极多）。核心机制：走廊每30秒会触发一次「回声」——墙壁上的符文石按顺序发光，发出低沉的嗡鸣声，如果在嗡鸣期间站在发光的符文石旁边，玩家的一个技能会被暂时替换为「灰烬打击」（暗属性攻击，伤害高于原技能但会消耗10%最大生命值）。'},
+{id:'c29',name:'无名圣所',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['dark','ghost','psychic'],desc:'遗忘熔炉副本第二阶段区域，锻忆者·多尔甘的领域。这里曾经是山炉氏族记忆铭刻师的冥想室，被多尔甘改造后变成了一个扭曲的空间——房间的形状随多尔甘的记忆而变化。核心机制：「记忆碎片」——房间中漂浮着多尔甘的记忆碎片（发光的半透明球体），触碰碎片会强制观看一段3秒的记忆片段（不可跳过），期间角色无法移动但获得50%减伤。如果队伍中所有玩家在同一轮内观看完所有碎片，多尔甘会在P1结束后短暂进入「追忆」状态（3秒眩晕），否则直接进入P2。'},
+{id:'c30',name:'核心炉膛',rank:'ss',cat:'city',source:'FantasyForge原创',elements:['fire','dark','steel'],desc:'遗忘熔炉副本最终区域，烬名·虚烬之主的战场。这里就是三千年前焚烧烬名的熔炉核心——炉火至今未熄，但火焰已经从金色变成了灰烬色。核心炉膛是一个巨大的圆形空间，中央是熔炉的主体（一个三层楼高的黑色金属构造体），周围环绕着四条熔岩河。战斗机制：P3时熔炉会周期性喷发，喷发时全屏灰烬风暴（持续5秒，每秒造成20%最大生命值伤害），玩家需要躲在四条熔岩河的交汇点（唯一的安全区）后方。如果莉拉在队，她可以在P3结束时用虚烬符文暂时熄灭炉火——这将触发隐藏P4「烬丝」。'},
+{id:'m131',name:'遗忘之树',rank:'s',cat:'monster',source:'FantasyForge原创',elements:['dark','grass','ghost'],desc:'遗忘之种·深渊副本中的常见怪物。由遗忘之种在灰滩地下疯长而成，树干是半透明的灰烬色，树冠由无数扭曲的名字丝线构成。攻击方式：①「根须束缚」——地下根须抓住玩家（3秒定身）；②「名之飘落」——树冠掉落名字丝线，命中玩家造成精神伤害并随机侵蚀1个技能（持续10秒）；③「低语」——被动效果，靠近遗忘之树的玩家会听到不断重复的音节（持续掉san值的效果，精神抗性低于50%的玩家会陷入混乱5秒）。弱点：火焰技能对遗忘之树伤害+100%。'},
+{id:'m132',name:'野生遗忘之树',rank:'legend',cat:'monster',source:'FantasyForge原创',elements:['dark','grass','fire','ghost'],desc:'遗忘之种·深渊副本核心BOSS。一颗长出王座形状树根的巨大枯树，树根深入无名王座。三阶段：P1「疯长」（树根从地面突刺，场地被分割为多个小区域）；P2「枯萎」（树冠大面积掉落，满地名字丝线形成减速区）；P3「王座觉醒」（树根构成的王座形状开始发光，试图与无名王座建立共振——如果共振成功，界外之境将永久扩张5%）。击败方法：在P3点燃树根王座（需要同时有3名玩家使用火焰技能），阻止共振。掉落：烬丝碎片x1（集齐5枚触发「唤醒烬丝」事件）。隐藏：莉拉用虚烬刻印让枯树说名字→触发隐藏BOSS「原名者」。'},
+{id:'w142',name:'烬名的谢礼',rank:'ss',cat:'weapon',source:'FantasyForge原创',elements:['fire','dark','light'],desc:'在遗忘熔炉中拒绝真名后击败烬名·虚烬之主获得的额外宝箱开出。外形：一个灰烬色的布包，打开后里面是一把微型的灰烬色匕首。效果：①「谢意」——被动，装备后与烬名相关的所有副本难度降低10%；②「回礼」——主动，对目标造成一次200%攻击力的灰烬伤害（CD 60秒），如果目标是「失去名字的存在」则额外附加5秒沉默；③「赠别」——当你被名之剥夺命中时，10%概率将剥夺的技能反弹给BOSS。背景：这是烬名在被拒绝真名后的回应——他尊重你的选择，但留下了一点灰烬作为纪念。'},
+{id:'w143',name:'监视者核心',rank:'ss',cat:'weapon',source:'FantasyForge原创',elements:['dark','fire','steel'],desc:'灰烬监视者掉落的锻造材料/副手物品。外形：一颗排球大小的灰烬色球体，表面刻满封印符文，内部有一颗缓慢跳动的灰烬之心。作为锻造材料：虚烬拳铠的核心组件（需要莉拉在队）。作为副手：装备后可以「看到」隐藏的符文（在遗忘熔炉副本中显示隐藏路径和宝箱）。特殊用途：记忆铭刻药剂的制作材料之一。与断裂铭刻锤同时装备时，触发隐藏对话——断裂铭刻锤开始共振，锤头上的虚烬符文发光，暗示多尔甘与灰烬监视者之间存在未被发现的关联。'},
+{id:'w144',name:'真名碎片',rank:'s',cat:'weapon',source:'FantasyForge原创',elements:['fire','dark'],desc:'锻忆者·多尔甘掉落的任务物品/副手物品。外形：拇指大小的灰烬色碎片，表面有一个不完整的符文（是烬名真名的一部分）。作为副手：装备后所有暗属性技能+5%伤害。作为任务物品：集齐5枚开启「山炉真相·第三章」主线。集齐7枚可以在莉拉处合成「真名刻板」（一次性消耗品，使用后对BOSS造成15%最大生命值真实伤害）。暗线：真名碎片上的不完整符文拼在一起，可以还原烬名真名的前三个字母——但没有人知道烬名的真名有几个字母。'},
+{id:'p22',name:'矮人烈酒',rank:'a',cat:'potion',source:'FantasyForge原创',elements:['fire','normal'],desc:'山炉氏族的传统饮品，用裂渊第五层裂焰深井的地热水和地下真菌酿造。效果：饮用后10分钟内火焰抗性+30%，攻击力+10%，但移动速度-15%。副作用：饮用后角色会「醉酒」（屏幕轻微晃动，持续3分钟），如果在醉酒状态下再喝一瓶，角色会倒地2秒。用途：记忆铭刻药剂的制作材料之一。趣味互动：拿给守门者他会摇头（他已经三千年没有喝过东西了），拿给铜言·裂焰他会一口气喝完然后说「味道没变」。'},
+{id:'p23',name:'残响碎片',rank:'ss',cat:'potion',source:'FantasyForge原创',elements:['dark','ghost','psychic'],desc:'击败残响之影后掉落的材料。7枚可合成一把钥匙开启议会密室。单独使用：吞服一枚残响碎片后，5分钟内可以听到界外之境的低语（随机显示一条世界观线索，如「守门者的心跳是门的唯一锁」「种者不是在播种，是在呼唤」）。集齐7枚后在堆名之城合成「议会之钥」——开启无名者议会的密室，里面保存着七位残响被焚烧前的完整记忆。'},
+{id:'q40',name:'铜港幽灵船',rank:'a',cat:'quest',source:'FantasyForge原创',elements:['water','dark','ghost'],desc:'翡翠海上的3人水上副本。每天夜晚，一艘古老的矮人商船从翡翠海底升起，船上载满了三千年前的铭刻武器——但船员都是幽灵。副本机制：甲板战斗（幽灵水手×6）→ 货舱探索（解谜：按铭刻符文顺序排列箱子）→ 船长室BOSS（幽灵船长·铁锚，P1用铁锚横扫甲板，P2召唤海浪冲击，P3铁锚碎裂后用碎片投掷）。掉落：矮人古董（可在翡翠海岸边老渔夫·铁须处兑换声望和装备）。隐藏：如果队伍中有莉拉，幽灵船长会在P3认出她的铭刻工具，停下攻击说了一句：「你也是山炉的人……别去裂渊。」'},
+{id:'t90',name:'界外铸造',rank:'ss',cat:'talent',source:'FantasyForge原创',elements:['dark','steel','fire'],desc:'击败铸者之影后解锁的锻造天赋。允许使用界外之境的材料（灰滩残渣、堆名砖石、残响碎片）锻造武器。界外锻造的武器有30%概率获得独特属性「残响」——攻击时有5%概率触发对应残响的效果（铸者→短暂改变地形，织者→恢复一个已用技能，记者→显示BOSS弱点，画者→使目标显形5秒，唱者→3秒AOE音波伤害）。副作用：界外锻造的武器每次使用都有1%概率「遗忘」一个附魔（直到重新锻造）。'},
+{id:'s51',name:'回声·灰烬打击',rank:'a',cat:'skill',source:'FantasyForge原创',elements:['dark','fire'],desc:'灰烬回廊中被动获得的临时技能。当站在发光符文石旁时，随机一个技能被替换为此技能。效果：对目标造成暗属性+火属性混合伤害（基础伤害为原技能的120%），但消耗10%最大生命值。此技能仅在遗忘熔炉副本的第一阶段「灰烬回廊」中可用，离开后自动消失。'},
+{id:'h57',name:'无名长老',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['dark','psychic','steel'],desc:'山炉氏族沉默派的领袖。没有人知道他的名字——因为他把自己的名字铭刻在了裂渊的岩壁上，从此岩壁的一部分就是他的名字，他的一部分就是岩壁。他能感知裂渊中每一块石头的震动，因此他是第一个察觉「门正在变宽」的人（但他选择了沉默，因为真名预言还没有应验）。沉默派实际上是双生铭刻团的地下延续——无名长老保存着骨铭技术的完整版本，他一直在等一个「值得托付骨铭的人」。当玩家完成「三千年前·双生祭」后，无名长老会主动出现，将骨铭之笔的完整使用方法交给玩家。关键台词：「名字不是力量，名字是承诺。你准备好承诺了吗？」'},
+{id:'q41',name:'真名预言',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['dark','light','psychic'],desc:'沉默派守候三千年的预言任务线。触发条件：完成三千年前·双生祭 + 与无名长老对话。任务流程：① 无名长老带玩家进入裂渊第三层记忆长廊最深处的密室——一面从未被发现的岩壁，上面刻着一段骨铭预言；② 预言内容：「当第七个无名者走出界外之境，当门说出自己的名字，当灰烬重新燃烧——一个新的名字将从遗忘中诞生，这个名字将定义世界的下一个纪元」；③ 解读：第七个无名者=守者（已应验），门说出自己的名字=门之低语（进行中），灰烬重新燃烧=烬丝被编织（进行中）；④ 新名字——无名长老指出，预言中的「新名字」不是任何已存在的名字，而是一个从未被说出的名字，一个属于「下一个纪元」的名字；⑤ 最终任务：在名之本源中找到这根「未生丝线」——一根不属于任何已知名字的丝线，它在名之本源的最深处独自编织。奖励：骨铭·存在刻印完整版（解锁骨铭之笔的全部能力）。'}
+
+,
+{id:'h58',name:'老渔夫·铁须',rank:'a',cat:'hero',source:'FantasyForge原创',elements:['water','normal'],desc:'翡翠海岸边的退休矮人战士，现在是渔夫。他是山炉氏族「沉默派」的外围成员——无名长老通过他向外界传递信息。功能NPC：提供翡翠海区域的声望任务（每日3个），任务奖励包括矮人古董碎片、翡翠海地图碎片。隐藏功能：如果玩家持有莉拉·烬脉的推荐信（完成莉拉支线获得），铁须会打开铜港的封印，允许玩家进入幽灵船副本。关键台词：「年轻人，你知道这海是什么颜色吗？不是翡翠绿……是骨铭灰。」'},
+{id:'h59',name:'审判官·铜面',rank:'ss',cat:'hero',source:'FantasyForge原创',elements:['fire','steel','light'],desc:'山炉氏族炉心大殿的审判官，在裂壁之议后由铜言·裂焰任命。铜面的意思是「铜面具」——他永远戴着一副铜制面具，没有人知道面具下是谁。功能NPC：出售记忆铭刻药剂配方（声望尊敬后解锁），提供炉心大殿每日声望任务。隐藏背景：铜面其实是莉拉·烬脉的弟弟，在三族大战中失散，被铜言·裂焰收养并重命名为「铜面」。当玩家声望达到崇敬后，铜面会在摘下面具的瞬间说一句话：「姐姐，铜不会忘记。」'},
+{id:'m133',name:'幽灵船长·铁锚',rank:'ss',cat:'monster',source:'FantasyForge原创',elements:['water','dark','steel'],desc:'铜港幽灵船的BOSS，生前是山炉氏族铜港的首席航海铭刻师。三千年前的焚烧仪式中，他的名字被误烧（诸神搞错了名单），于是他的幽灵永远困在翡翠海底。三阶段战斗：P1「铁锚横扫」（在甲板上用巨型铁锚攻击，范围180度）；P2「海浪冲击」（召唤翡翠海浪拍击甲板，玩家需抓住栏杆否则落水）；P3「沉船自爆」（铁锚意识到自己已经死了三千年，选择自爆终结——此时所有玩家获得3秒无敌并目睹铜港沉没的全息影像）。掉落：矮人古董（可在铁须处兑换装备）。'},
+{id:'m134',name:'未生丝线',rank:'legend',cat:'monster',source:'FantasyForge原创',elements:['dark','light','psychic'],desc:'名之本源最深处独自编织的丝线。它不是任何已知名字的残响，也不是烬丝——它是一根「从未被说出的名字」的丝线。这根丝线如果编织完成，将诞生一个全新的概念，这个概念将定义下一个纪元。未生丝线没有战斗形态，它是「诸名之战」终极阶段的隐藏机制：当未生者进入P5「虚无」时，玩家需要将7根烬丝 + 未生丝线同时编织，才能给未生者一个定义。如果编织失败，未生丝线会消失，赛季重置。'},
+{id:'t91',name:'虚烬符文研究',rank:'ss',cat:'talent',source:'FantasyForge原创',elements:['fire','dark','psychic'],desc:'莉拉·烬脉的进阶天赋，需要完成「虚烬符文」全部研究任务线后解锁。效果：① 虚烬刻印现在可以堆叠到5层（原为3层），每层虚空燃烧伤害+1%最大生命值/秒；② 解锁「虚烬视界」——可以看到任何带有虚烬符文的物体（包括灰烬监视者的核心、遗忘熔炉的炉壁、名之本源的丝线）；③ 解锁「烬丝提取」——在遗忘熔炉P4中，莉拉可以手动提取烬丝（不再依赖随机触发），每副本限1次。此天赋是完成「唤醒烬丝」事件的关键。'},
+{id:'q42',name:'裂壁之议',rank:'ss',cat:'quest',source:'FantasyForge原创',elements:['fire','light','dark'],desc:'山炉氏族内部政治事件的前置任务链。触发条件：完成「遗忘熔炉」副本 + 与石律·铁砧对话。任务流程：① 石律在炉心大殿召集氏族长老，议题是「是否继续封印遗忘熔炉」；② 玩家作为外聘冒险者被邀请列席（因为莉拉的关系）；③ 会议中铜言·裂焰闯入，公开了石律隐瞒「门正在变宽」的证据（记忆铭刻记录）；④ 氏族分裂为两派，玩家需要选择支持哪一方（选择影响后续声望）；⑤ 无论选择如何，裂壁之议都会以「炉火审判」收场——石律被判有罪，铜言接管氏族，门此时已宽到可容两人并行。'},
+{id:'s52',name:'门正在变宽',rank:'ss',cat:'skill',source:'FantasyForge原创',elements:['dark','psychic','light'],desc:'不是玩家可习得的技能，而是世界观的核心状态效果。每当以下事件发生时，「门正在变宽」进度+10%：灰烬监视者被击败 / 遗忘熔炉被首次通关 / 种者·第六无名者被击败 / 引路灯被点亮 / 守者降临灰滩 / 双生对峙开始。当进度达到100%时，门完全敞开，界外之境与主物质界融合——世界进入「诸名之战」赛季终极阶段。此技能名称来源于石律·铁砧隐瞒了30年的秘密，他在炉火审判中坦白时，炉心大殿的地面裂开了一条缝——门已经从地下开始变宽了。'}
+
+,
+{id:'w145',name:'灰烬短弓',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['fire','normal'],desc:'灰烬监视者巡逻队标配武器，弓身由灰烬涂层覆盖的铁木制成。射出的箭矢带灰烬余温，命中后有5%概率点燃目标。山炉氏族裂渊第一层铁砧厅可购买。'},
+{id:'w146',name:'铭刻匕首',rank:'c',cat:'weapon',source:'FantasyForge原创',elements:['steel','psychic'],desc:'山炉氏族学徒的入门武器，刀身上刻着基础的骨铭符文。攻击时微弱发光，暴击时符文短暂显现。新手任务奖励。'},
+{id:'w147',name:'遗忘之种·枯叶',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['dark','grass'],desc:'遗忘之种·萌芽的劣化版本，种者死前散落的种子碎片凝结而成。攻击有5%概率种下弱化版遗忘之种（1秒后枯萎，造成少量暗属性伤害）。界外之境灰滩小怪掉落。'},
+{id:'w148',name:'裂焰护手',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['fire','steel'],desc:'铜言·裂焰派系标准装备，拳套表面刻有裂焰符文。攻击附加少量火焰伤害，连击3次后触发「裂焰冲击」（短距离火焰AOE）。裂焰派声望友善后购买。'},
+{id:'w149',name:'铁砧重锤',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['steel','normal'],desc:'铁砧派系标准装备，锤头形状模拟山炉氏族铁砧。重击可短暂击晕目标1秒，CD 15秒。铁砧派声望友善后购买。'},
+{id:'w150',name:'沉默面具',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['dark','psychic'],desc:'沉默派入门装备，铜制面具覆盖面部。佩戴者精神抗性+10%，但无法使用语音类技能。沉默派声望友善后购买。'},
+{id:'w151',name:'铜港火枪',rank:'c',cat:'weapon',source:'FantasyForge原创',elements:['fire','steel'],desc:'翡翠海铜港幽灵船水兵的制式火枪，因浸泡海水三千年，开火时喷出的不是子弹而是蒸汽和灰烬。伤害低但射程远，适合引怪。铜港幽灵船小怪掉落。'},
+{id:'w152',name:'烬丝手套',rank:'b',cat:'weapon',source:'FantasyForge原创',elements:['fire','dark'],desc:'用遗忘熔炉中提取的烬丝编织的手套，佩戴后徒手攻击附带灰烬灼烧。如果同时持有骨铭之笔，手套会与笔产生共振，小幅提升笔的铭刻成功率。'},
+{id:'w153',name:'界外碎片剑',rank:'d',cat:'weapon',source:'FantasyForge原创',elements:['dark','steel'],desc:'用灰滩上捡到的界外碎片粘在断剑上制成的临时武器。攻击力极低，但对界外之境的怪物有额外伤害。灰滩拾取物。'},
+{id:'w154',name:'记忆之水瓶',rank:'c',cat:'weapon',source:'FantasyForge原创',elements:['water','psychic'],desc:'装满记忆熔池液体的玻璃瓶，可投掷。命中目标后造成精神伤害并有30%概率使目标混乱3秒。一次性消耗品，用完即碎。遗忘熔炉小怪掉落。'},
+{id:'m135',name:'灰烬游魂',rank:'c',cat:'monster',source:'FantasyForge原创',elements:['dark','ghost'],desc:'遗忘熔炉灰烬回廊中的常见小怪。被焚烧名字的残存意识，没有实体，只有一团灰烬色的人形轮廓。攻击模式单一：直线冲撞。但数量极多，容易触发「回声」机制。掉落：灰烬残渣（锻造材料）。'},
+{id:'m136',name:'根须缠绕者',rank:'b',cat:'monster',source:'FantasyForge原创',elements:['grass','dark'],desc:'遗忘之种·深渊副本中的精英怪。由遗忘之树的根须异变而成，可以控制地面上任何植物。攻击方式：地面根须突刺 + 缠绕定身 + 吸取生命值。弱点：火焰技能。掉落：遗忘之种碎片（5枚可合成一粒遗忘之种·萌芽）。'},
+{id:'m137',name:'名潮泡沫',rank:'d',cat:'monster',source:'FantasyForge原创',elements:['water','psychic'],desc:'诸名之战名潮阶段的最低级怪物。名之本源丝线溢出凝结的水银状液滴，没有固定形态，靠撞击造成微弱精神伤害。5个名潮泡沫可以融合成1个名潮涌兽。掉落：丝线残渣。'},
+{id:'m138',name:'铜港幽灵水手',rank:'c',cat:'monster',source:'FantasyForge原创',elements:['water','ghost'],desc:'铜港幽灵船上的普通小怪，三千年前的矮人水手幽灵。穿着破旧的铜色制服，手持锈蚀的铜桨。攻击方式单调但会互相配合——3人以上时会发动「铜桨合击」。掉落：矮人古董碎片。'},
+{id:'m139',name:'铸者·残影',rank:'b',cat:'monster',source:'FantasyForge原创',elements:['dark','steel'],desc:'铸者之影被击败后留下的残留投影，出现在堆名之城中。比完整版弱很多，但会不断重铸周围的地形（地面变成铁砧形状、墙壁变成熔炉形状）。击败后掉落铸者碎片。'},
+{id:'m140',name:'记忆长廊守卫',rank:'b',cat:'monster',source:'FantasyForge原创',elements:['psychic','steel'],desc:'山炉氏族裂渊第三层记忆长廊的守护者，由骨铭符文驱动的人形构造体。攻击时会释放「记忆冲击」——玩家屏幕短暂闪过一段随机记忆画面，同时造成精神伤害。掉落：记忆碎片。'},
+{id:'m141',name:'裂焰幼兽',rank:'d',cat:'monster',source:'FantasyForge原创',elements:['fire','normal'],desc:'裂焰深井附近的小型火元素生物，身体由地热蒸汽和火焰构成。新手练级怪，掉落裂焰碎片。'},
+{id:'m142',name:'灰滩拾荒者',rank:'c',cat:'monster',source:'FantasyForge原创',elements:['dark','normal'],desc:'界外之境灰滩上的中立生物，外形像灰色的大型蜥蜴，靠吃灰滩上的名字残渣为生。不主动攻击，但被攻击后会喷出灰烬色墨汁（降低命中）。掉落：灰滩残渣。'},
+{id:'m143',name:'残响回声',rank:'b',cat:'monster',source:'FantasyForge原创',elements:['ghost','psychic'],desc:'无名者议会密室中游荡的半透明人影，是七位残响被焚烧前的回声。每个回声只能重复说一个字——这是它们名字中最后剩下的音节。击败后掉落对应的残响碎片。7种回声对应7种碎片。'},
+{id:'t92',name:'灰烬抗性',rank:'c',cat:'talent',source:'FantasyForge原创',elements:['fire','steel'],desc:'山炉氏族裂渊区域的入门天赋。火焰抗性+15%，灰烬属性伤害-10%。完成裂渊第一层铁砧厅的新手任务后获得。'},
+{id:'t93',name:'记忆铭刻入门',rank:'c',cat:'talent',source:'FantasyForge原创',elements:['psychic','steel'],desc:'基础铭刻天赋，允许玩家在武器上刻入简单的记忆铭刻（+5%经验获取，持续1小时）。需要在山炉氏族裂渊第二层铭刻工坊学习。'},
+{id:'t94',name:'界外感知',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['dark','psychic'],desc:'在界外之境中可以感知隐藏实体（如灰滩深处的隐藏通道、堆名之城中的密室）。需要完成引灯之路前置任务。'},
+{id:'t95',name:'名之抵抗',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['psychic','light'],desc:'对「名之剥夺」和「记忆侵蚀」效果的抗性+25%。在遗忘熔炉副本中非常实用。需要完成山炉氏族声望崇敬。'},
+{id:'t96',name:'灰滩行走',rank:'c',cat:'talent',source:'FantasyForge原创',elements:['dark','normal'],desc:'允许在界外之境灰滩上正常行走（没有此天赋则移动速度-50%且持续掉血）。进入界外之境的必要天赋，在引灯人处学习。'},
+{id:'t97',name:'裂焰之体',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['fire','steel'],desc:'铜言·裂焰派系天赋。攻击有10%概率附带裂焰灼烧（3秒内额外造成20%攻击力的火焰伤害）。裂焰派声望尊敬后解锁。'},
+{id:'t98',name:'铁砧之韧',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['steel','normal'],desc:'铁砧派系天赋。受到致命伤害时有20%概率保留1点生命值（CD 300秒）。铁砧派声望尊敬后解锁。'},
+{id:'t99',name:'骨铭初悟',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['dark','steel','psychic'],desc:'沉默派天赋。允许阅读裂渊岩壁上的骨铭符文（获取隐藏世界观线索）。沉默派声望尊敬后解锁，是解锁「骨铭·存在刻印」完整版的前置。'},
+{id:'t100',name:'烬丝感知',rank:'b',cat:'talent',source:'FantasyForge原创',elements:['fire','dark'],desc:'在遗忘熔炉中可以感知烬丝的存在（屏幕边缘出现灰烬色丝线提示）。拥有此天赋后，遗忘熔炉P4的烬丝提取成功率从70%提升到90%。'},
+{id:'p24',name:'灰烬涂层药剂',rank:'b',cat:'potion',source:'FantasyForge原创',elements:['fire','steel'],desc:'涂抹在武器上的临时增益药剂。效果：武器攻击附带灰烬灼烧（每次命中造成额外2%最大生命值伤害，持续5分钟）。制作材料：灰烬残渣x5 + 裂焰碎片x2。'},
+{id:'p25',name:'丝线凝合剂',rank:'b',cat:'potion',source:'FantasyForge原创',elements:['dark','psychic'],desc:'名之本源丝线液化后制成的药剂。效果：饮用后10分钟内精神伤害+15%，但物理防御-10%。制作材料：丝线残渣x3 + 矮人烈酒x1。'},
+{id:'p26',name:'铜港盐水',rank:'c',cat:'potion',source:'FantasyForge原创',elements:['water','normal'],desc:'翡翠海海水蒸发后的粗盐溶液。效果：恢复15%生命值，但在界外之境中使用无效（界外之境的规则排斥正常物质）。翡翠海区域小怪掉落。'},
+{id:'p27',name:'遗忘粉尘',rank:'b',cat:'potion',source:'FantasyForge原创',elements:['dark','ghost'],desc:'堆名之城特产。效果：撒向敌人后使其遗忘一个技能（持续10秒，BOSS免疫）。撒向友方则恢复一个被侵蚀的技能。制作材料：堆名砖石粉末x3。'},
+{id:'p28',name:'记忆铭刻药剂·微效',rank:'c',cat:'potion',source:'FantasyForge原创',elements:['fire','psychic'],desc:'记忆铭刻药剂的低级版本。效果：3分钟内免疫「记忆侵蚀」（不免疫「名之剥夺」），所有技能冷却时间缩短10%。副作用：药效结束后遗忘一个随机NPC名字（持续30分钟）。制作材料：灰烬残渣x3。'},
+{id:'q43',name:'翡翠海岸声望线',rank:'a',cat:'quest',source:'FantasyForge原创',elements:['water','normal'],desc:'翡翠海区域的声望任务链。通过老渔夫·铁须接取，分为5个阶段：① 收集翡翠海中的铜矿微粒；② 调查海底铜港的异响；③ 击败3波铜港幽灵水手；④ 潜入铜港寻找铭刻记录；⑤ 面对铁须的真相（铁须是沉默派的外围成员）。完成后解锁翡翠海声望，可购买翡翠海专属装备。'},
+{id:'q44',name:'铁砧派日常',rank:'b',cat:'quest',source:'FantasyForge原创',elements:['steel','normal'],desc:'铁砧派每日声望任务。内容：在裂渊第一层铁砧厅帮忙维护铭刻设备、运送锻造材料、巡逻封印走廊。奖励：铁砧派声望 + 矮人锻造材料。连续完成7天解锁额外奖励：铁砧重锤（b级武器）。'},
+{id:'q45',name:'裂焰派日常',rank:'b',cat:'quest',source:'FantasyForge原创',elements:['fire','steel'],desc:'裂焰派每日声望任务。内容：在裂焰深井采集地热能量、维修裂焰符文、训练裂焰战斗技巧。奖励：裂焰派声望 + 裂焰碎片。连续完成7天解锁额外奖励：裂焰护手（b级武器）。'},
+{id:'q46',name:'沉默派日常',rank:'b',cat:'quest',source:'FantasyForge原创',elements:['dark','psychic'],desc:'沉默派每日声望任务。内容：在记忆长廊整理铭刻记录、翻译骨铭符文、静坐冥想（实际是等待真名预言的征兆）。奖励：沉默派声望 + 记忆碎片。连续完成7天解锁额外奖励：沉默面具（b级武器）。'},
+{id:'q47',name:'引灯之路·续',rank:'s',cat:'quest',source:'FantasyForge原创',elements:['light','dark','ghost'],desc:'引灯之路的后续支线。触发条件：完成引灯之路 + 选择第三条路（门变桥）。任务流程：① 引路灯在桥上持续发光，但光线越来越弱——因为引路灯不是永久的，它是用「被遗忘者的最后一点记忆」制成的；② 玩家需要为引路灯寻找新的燃料：在界外之境中收集100个「最后记忆」（每个被遗忘者在消失前的最后一个念头）；③ 收集完成后，引路灯的光变为金色——它不再是被遗忘者的记忆在燃烧，而是所有记忆的集合在发光；④ 引路灯最终形态：「众名之灯」，它的光不再照亮道路，而是照亮名字——所有被遗忘的名字在灯光下短暂可见。奖励：众名之灯（s级副手，引路灯升级版）。'},
+{id:'f24',name:'堆名之城议会',rank:'ss',cat:'faction',source:'FantasyForge原创',elements:['dark','ghost','psychic'],desc:'界外之境堆名之城的管理机构，由七位无名者残响的投影共同组成。议会不统治——它只是「记录」。堆名之城的每一块砖石上都刻着一个名字，议会确保每个名字都被正确记录。但当种者开始播种后，议会记录的速度跟不上遗忘的速度，砖石开始破碎。议会密室中保存着七位残响被焚烧前的完整记忆，用议会之钥可以开启。声望获取方式：击败残响之影、提交残响碎片。崇敬后可购买界外之境专属装备。'},
+{id:'s53',name:'众名之灯',rank:'s',cat:'skill',source:'FantasyForge原创',elements:['light','dark','ghost'],desc:'引灯之路·续完成后获得的终极引灯技能。主动效果：照亮半径50米内所有隐藏的名字和实体，持续30秒（CD 180秒）。被动效果：在界外之境中，所有「名字相关」效果持续时间+50%。特殊效果：在诸名之战中，众名之灯可以为未生者提供「定义」的框架——如果没有众名之灯，烬丝无法编织进未生者体内。'},
+{id:'s54',name:'灰烬打击',rank:'c',cat:'skill',source:'FantasyForge原创',elements:['fire','dark'],desc:'灰烬监视者巡逻队的基础攻击技能。双手注入灰烬能量后打击目标，造成火+暗混合伤害。暴击时灰烬能量扩散，对目标周围3米造成AOE伤害。在裂渊封印走廊学习。'},
+{id:'s55',name:'铭刻修复',rank:'b',cat:'skill',source:'FantasyForge原创',elements:['steel','psychic'],desc:'修复铭刻物品的基础技能。可以修复断裂铭刻锤等铭刻武器的耐久度，也可以修复裂渊岩壁上损坏的骨铭符文。修复成功率为70%，失败则物品耐久度-10%。在铭刻工坊学习。'},
+{id:'s56',name:'残响聆听',rank:'b',cat:'skill',source:'FantasyForge原创',elements:['ghost','psychic'],desc:'在堆名之城中聆听砖石上的名字残响。使用后显示周围10米内所有砖石上的名字内容，持续5秒。如果连续使用3次不中断，可以听到一段完整的记忆回放（5秒）。在引灯人处学习。'}
+
+,
+{id:'w155',name:'界外碎木棍',rank:'e',cat:'weapon',source:'FantasyForge原创',elements:['dark','normal'],desc:'灰滩上随便捡的木头，浸了界外的灰烬后变硬了。能打人，但也就那样。新手出生装备。'},
+{id:'m144',name:'灰滩虫',rank:'e',cat:'monster',source:'FantasyForge原创',elements:['dark','normal'],desc:'界外之境灰滩上的小虫，灰烬色外壳，靠吃名字残渣为生。1级新手怪，打死后爆出1-3个灰滩残渣。'},
+{id:'m145',name:'裂焰蛆',rank:'e',cat:'monster',source:'FantasyForge原创',elements:['fire','normal'],desc:'裂焰深井最底层的微小火焰生物，身体只有指甲盖大小。成群出现时会造成微量灼烧伤害，但单独一只毫无威胁。掉落：裂焰残渣。'},
+{id:'t101',name:'灰烬感知',rank:'e',cat:'talent',source:'FantasyForge原创',elements:['fire'],desc:'最基础的灰烬相关天赋。效果：火焰伤害+2%。没什么大用，但这是所有灰烬系天赋的前置。在裂渊铁砧厅自动习得。'}
+
 ];
 
 // ========== 世界配置 ==========
@@ -935,7 +1266,19 @@ var CITY_DATA = {
   abyss_eye: {name:"深渊之眼",rank:"legend",ruler:"虚空先知",population:"约1万",religion:"虚空信仰",economy:"灵魂交易",military:"虚空造物",quests:["寻找虚空教典","召唤古神","窥探命运"],desc:"来自深海的神秘教派，窥见宇宙的终极秘密。他们的眼睛能看到过去和未来。",faction:"abyssal"},
   void_pioneer: {name:"虚空先锋",rank:"legend",ruler:"虚空使者",population:"约5000",religion:"虚空教",economy:"混沌能量",military:"虚空战士",quests:["获取虚空之力","对抗秩序势力","打开维度门"],desc:"来自虚空深处的先遣军团。他们的任务是撕裂现实，让虚空吞噬一切。",faction:"abyssal"},
   shadow_covenant: {name:"暗影契约",rank:"legend",ruler:"暗影议长",population:"约3000",religion:"暗影信仰",economy:"暗杀/情报",military:"暗影刺客",quests:["加入暗影契约","执行暗杀任务","寻找暗影之心"],desc:"由堕落的法师、刺客与死灵术士组成的秘密结社。他们在暗中操纵着世界的格局。",faction:"shadow"},
-  crimson_dusk: {name:"血色黄昏",rank:"ss",ruler:"血族议会",population:"约10万（灵魂）",religion:"血族信仰",economy:"灵魂交易",military:"血卫/狼人战士",quests:["进入血族领地","获取血族之力","对抗圣光教会"],desc:"嗜血的吸血鬼与狼人组成的黑暗议会。血红色的月光永远照耀着这片领域。",faction:"crimson"}
+  crimson_dusk: {name:"血色黄昏",rank:"ss",ruler:"血族议会",population:"约10万（灵魂）",religion:"血族信仰",economy:"灵魂交易",military:"血卫/狼人战士",quests:["进入血族领地","获取血族之力","对抗圣光教会"],desc:"嗜血的吸血鬼与狼人组成的黑暗议会。血红色的月光永远照耀着这片领域。",faction:"crimson"},
+  beyond_realm: {name:"界外之境",rank:"legend",ruler:"无名者议会",population:"不可知",religion:"名之本源",economy:"名字残渣循环",military:"残响之影",quests:["引灯之路","遗忘之种·深渊","双生对峙"],desc:"门外的世界。所有被焚烧的名字最终抵达的地方，灰烬色的天空下是灰色的沙滩和不断变换的城市废墟。",faction:"nameless_council"},
+  ash_shore: {name:"灰滩",rank:"ss",ruler:"引灯人",population:"不可知",religion:"引路灯",economy:"灰烬拾荒",military:"灰滩拾荒者",quests:["遗忘之种·深渊","引灯之路·续"],desc:"界外之境的入口，一片灰烬色的沙滩。沙滩上散落着被焚烧名字的残渣，踩上去会听到低语。",faction:"nameless_council"},
+  name_heap: {name:"堆名之城",rank:"ss",ruler:"无名者议会",population:"不可知",religion:"名字记录",economy:"名字交易",military:"残响之影",quests:["残响共鸣","引灯之路"],desc:"由名字砖石构建的城市，每块砖石上刻着一个被遗忘的名字。城中游荡着残响之影。",faction:"nameless_council"},
+  nameless_throne: {name:"无名王座",rank:"legend",ruler:"无",population:"0",religion:"无",economy:"无",military:"无",quests:["唤醒烬丝"],desc:"界外之境深处的巨大黑色王座，只接受失去名字的人。烬行曾试图坐上王座但被拒绝——他的名字太重。",faction:"none"},
+  name_source: {name:"名之本源",rank:"legend",ruler:"无",population:"0",religion:"无",economy:"丝线编织",military:"未生丝线",quests:["唤醒烬丝","诸名之战"],desc:"灰滩之下的隐藏第四层，名字概念本身存在的地方。无数灰烬色丝线在虚空中编织、断裂、重组。",faction:"none"},
+  ember_ruin: {name:"烬名废墟",rank:"ss",ruler:"无",population:"0",religion:"骨铭",economy:"无",military:"无",quests:["三千年前·双生祭"],desc:"三千年前焚烧烬名的仪式发生地，遗忘熔炉最下方。中央碎裂的王座模型至今还在回荡焚烧时的声音。",faction:"none"},
+  jade_sea: {name:"翡翠海",rank:"s",ruler:"老渔夫·铁须",population:"约2000（沿岸渔村）",religion:"山炉氏族",economy:"渔业/铜矿",military:"渔民自卫队",quests:["铜港幽灵船","翡翠海岸声望线"],desc:"矮人领地东部的内陆海，因铜矿微粒呈翡翠色。海底沉没着远古铜港。",faction:"mountain_furnace"},
+  furnace_rift: {name:"山炉氏族裂渊",rank:"ss",ruler:"铜言·裂焰",population:"约5万",religion:"山炉信仰",economy:"铭刻锻造",military:"灰烬监视者",quests:["炉火审判","裂壁之议","遗忘熔炉"],desc:"山炉氏族核心领地，七层裂谷。岩壁刻满骨铭符文，最深处通往遗忘熔炉。",faction:"mountain_furnace"},
+  heart_forge: {name:"炉心大殿",rank:"ss",ruler:"铜言·裂焰",population:"约500（长老及侍从）",religion:"始祖炉火",economy:"政治中心",military:"审判官",quests:["炉火审判"],desc:"裂渊第四层的政治中心，中央始祖炉火三千年不灭。炉火审判发生地。",faction:"mountain_furnace"},
+  ash_corridor: {name:"灰烬回廊",rank:"s",ruler:"无",population:"0",religion:"无",economy:"无",military:"灰烬游魂",quests:["遗忘熔炉"],desc:"遗忘熔炉第一阶段，狭长走廊两侧嵌满灰烬色符文石，每块刻着被焚烧名字的残片。",faction:"none"},
+  nameless_sanctum: {name:"无名圣所",rank:"ss",ruler:"锻忆者·多尔甘",population:"0",religion:"记忆铭刻",economy:"无",military:"记忆碎片",quests:["遗忘熔炉"],desc:"遗忘熔炉第二阶段，多尔甘的领域。房间形状随多尔甘的记忆变化。",faction:"mountain_furnace"},
+  core_furnace: {name:"核心炉膛",rank:"ss",ruler:"烬名·虚烬之主",population:"0",religion:"焚烧之名",economy:"无",military:"虚烬造物",quests:["遗忘熔炉"],desc:"遗忘熔炉最终区域，三千年前焚烧烬名的熔炉核心。灰烬色火焰至今未熄。",faction:"none"}
 };
 
 // 势力详情
@@ -949,7 +1292,11 @@ var FACTION_DATA = {
   shadow: {name:"暗影议会",type:"dark",desc:"古尔丹建立的秘密术士组织。他们崇拜恶魔，追求禁忌的暗影魔法。",leader:"古尔丹",founded:"第一次战争前",territory:"黑沼泽",enemies:["alliance","silver_hand"]},
   sauron: {name:"索伦势力",type:"dark",desc:"黑暗魔君索伦创建的势力。魔多帝国、戒灵军团都是他的工具。",leader:"索伦",founded:"第二纪元",territory:"魔多",enemies:["alliance","gondor","elven"]},
   abyssal: {name:"深渊之眼",type:"dark",desc:"来自虚空的神秘教派。他们崇拜古神，试图打开通往虚空的大门。",leader:"虚空先知",founded:"未知",territory:"深渊裂隙",enemies:["all","light"]},
-  mage_council: {name:"法师议会",type:"light",desc:"肯瑞托魔法议会的正式名称。达拉然是他们的核心，研究奥术与知识。",leader:"议会领袖",founded:"约3000年前",territory:"达拉然及周边",enemies:["demon","abyssal"]}
+  mage_council: {name:"法师议会",type:"light",desc:"肯瑞托魔法议会的正式名称。达拉然是他们的核心，研究奥术与知识。",leader:"议会领袖",founded:"约3000年前",territory:"达拉然及周边",enemies:["demon","abyssal"]},
+  mountain_furnace: {name:"山炉氏族",type:"neutral",desc:"矮人铭刻师的氏族，掌握记忆铭刻与骨铭技术。三千年前参与了焚烧烬名的仪式，至今仍在守护遗忘熔炉的封印。裂壁之议后分裂为铁砧派、裂焰派、沉默派三派。",leader:"铜言·裂焰（名义）/ 无名长老（实际）",founded:"远古代",territory:"山炉氏族裂渊",enemies:["nameless_council","forgotten_forge"]},
+  nameless_council: {name:"无名者议会",type:"dark",desc:"界外之境中七位被焚烧名字的残响组成的议会。他们不统治，只记录——记录每一个被遗忘的名字。但种者的出现打破了议会的平衡。",leader:"铸者·第一无名者",founded:"三千年前焚烧仪式",territory:"堆名之城",enemies:["mountain_furnace"]},
+  twin_engravers: {name:"双生铭刻团",type:"neutral",desc:"三千年前由烬守和烬行兄弟创立的精英铭刻团体，发明了骨铭技术。12名成员在焚烧仪式中仅存2人。技术至今残留在名之本源的丝线中。",leader:"烬守（已失名）/ 烬行（已失名）",founded:"三千年前",territory:"已覆灭",enemies:["无"]},
+  forgotten_forge: {name:"遗忘熔炉意识",type:"dark",desc:"不是真正的阵营，而是遗忘熔炉本身产生的扭曲意识。三千年来不断焚烧名字，熔炉产生了一种「想要焚烧更多名字」的饥饿感。它不是邪恶的——它只是饿了。",leader:"烬名·虚烬之主（熔炉的嘴）",founded:"三千年前焚烧仪式",territory:"遗忘熔炉",enemies:["mountain_furnace","nameless_council"]}
 };
 
 // 随机事件配置
@@ -1042,7 +1389,7 @@ function render() {
     var item = filtered[i];
     var hl = (currentHighlight === item.id) ? ' highlight' : '';
     var isCollected = myCollection.indexOf(item.id) >= 0;
-    html += '<div class="card' + hl + '" onclick="copyCard(\'' + esc(item.id) + '\')" ondblclick="toggleCollect(\'' + esc(item.id) + '\')">' +
+    html += '<div class="card' + hl + '" onclick="copyCard(\'' + esc(item.id) + '\')">' +
       '<div class="card-header">' +
         '<div class="card-name">' + (isCollected ? '⭐ ' : '') + esc(item.name) + '</div>' +
         '<div class="card-source">' + esc(item.source) + '</div>' +
@@ -1070,7 +1417,9 @@ function buildNav() {
     {id:'city', label:'🏰 城市'},
     {id:'skill', label:'✨ 技能'},
     {id:'talent', label:'⭐ 天赋'},
-    {id:'faction', label:'⚡ 势力'}
+    {id:'faction', label:'⚡ 势力'},
+    {id:'potion', label:'🧪 药水'},
+    {id:'quest', label:'📜 任务'}
   ];
   for (var i = 0; i < cats.length; i++) {
     var c = cats[i];
@@ -1193,7 +1542,7 @@ function showAllCollection() {
   var html = '<div style="grid-column:1/-1;text-align:center;padding:12px 0;color:var(--gold)"><h3>📚 我的收藏 (' + myCollection.length + ')</h3></div>';
   for (var i = 0; i < filtered.length; i++) {
     var item = filtered[i];
-    html += '<div class="card" onclick="copyCard(\'' + esc(item.id) + '\')" ondblclick="toggleCollect(\'' + esc(item.id) + '\')">' +
+    html += '<div class="card" onclick="copyCard(\'' + esc(item.id) + '\')">' +
       '<div class="card-header">' +
         '<div class="card-name">⭐ ' + esc(item.name) + '</div>' +
         '<div class="card-source">' + esc(item.source) + '</div>' +
@@ -1489,22 +1838,11 @@ function showToast(msg) {
 }
 
 // ========== 初始化 ==========
-function init() {
-  buildNav();
-  buildElFilter();
-  buildAdvFilter();
-  renderLegend();
-  initSearch();
-  initMap();
-  renderEnhanced();
-  updateStats();
-}
-
 // 启动
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function() { initEnhanced(); });
 } else {
-  init();
+  initEnhanced();
 }
 
 // 键盘事件
@@ -1515,27 +1853,36 @@ document.addEventListener('keydown', function(e) {
 
 // ========== 角色构建器 ==========
 var charBuild = {hero:null, weapon:null, skills:[], talents:[]};
+var _charCache = null;
+function _getCharCache() {
+  if (_charCache) return _charCache;
+  _charCache = {
+    heroes: DB.filter(function(i){ return i.cat === 'hero'; }),
+    topWeapons: DB.filter(function(i){ return i.cat === 'weapon' && ['legend','ss','s'].indexOf(i.rank) >= 0; }),
+    topSkills: DB.filter(function(i){ return i.cat === 'skill' && ['legend','ss','s','a'].indexOf(i.rank) >= 0; }),
+    topTalents: DB.filter(function(i){ return i.cat === 'talent' && ['legend','ss','s'].indexOf(i.rank) >= 0; })
+  };
+  return _charCache;
+}
 
 function openCharBuilder() {
-  var heroes = DB.filter(i => i.cat === 'hero');
-  var weapons = DB.filter(i => i.cat === 'weapon');
-  var skills = DB.filter(i => i.cat === 'skill');
-  var talents = DB.filter(i => i.cat === 'talent');
+  var c = _getCharCache();
+  charBuild = {hero:null, weapon:null, skills:[], talents:[]};
   
   document.getElementById('modalTitle').textContent = '🧙 角色构建器';
   document.getElementById('modalBody').innerHTML = 
     '<div class="char-builder">' +
-    '<div class="char-step"><h4>选择英雄</h4><div class="char-options">' +
-    heroes.slice(0,12).map(h => '<div class="char-option" onclick="selectHero(\''+h.id+'\')">'+h.name+'</div>').join('') +
+    '<div class="char-step"><h4>选择英雄</h4><div class="char-options" id="charHeroOpts">' +
+    c.heroes.slice(0,16).map(function(h){ return '<div class="char-option" data-id="'+h.id+'" onclick="selectHero(\''+h.id+'\')">'+h.name+'</div>'; }).join('') +
     '</div></div>' +
-    '<div class="char-step"><h4>装备武器</h4><div class="char-options">' +
-    weapons.filter(w => RANK_LABELS[w.rank] && ['legend','ss','s'].indexOf(w.rank) >= 0).slice(0,10).map(w => '<div class="char-option" onclick="selectWeapon(\''+w.id+'\')">'+w.name+'</div>').join('') +
+    '<div class="char-step"><h4>装备武器</h4><div class="char-options" id="charWeaponOpts">' +
+    c.topWeapons.slice(0,12).map(function(w){ return '<div class="char-option" data-id="'+w.id+'" onclick="selectWeapon(\''+w.id+'\')">'+w.name+'</div>'; }).join('') +
     '</div></div>' +
-    '<div class="char-step"><h4>选择技能 (最多3个)</h4><div class="char-options">' +
-    skills.filter(s => RANK_LABELS[s.rank] && ['legend','ss','s','a'].indexOf(s.rank) >= 0).slice(0,12).map(s => '<div class="char-option" onclick="toggleSkill(\''+s.id+'\')">'+s.name+'</div>').join('') +
+    '<div class="char-step"><h4>选择技能 (最多3个)</h4><div class="char-options" id="charSkillOpts">' +
+    c.topSkills.slice(0,14).map(function(s){ return '<div class="char-option" data-id="'+s.id+'" onclick="toggleSkill(\''+s.id+'\')">'+s.name+'</div>'; }).join('') +
     '</div></div>' +
-    '<div class="char-step"><h4>选择天赋 (最多3个)</h4><div class="char-options">' +
-    talents.filter(t => RANK_LABELS[t.rank] && ['legend','ss','s'].indexOf(t.rank) >= 0).slice(0,12).map(t => '<div class="char-option" onclick="toggleTalent(\''+t.id+'\')">'+t.name+'</div>').join('') +
+    '<div class="char-step"><h4>选择天赋 (最多3个)</h4><div class="char-options" id="charTalentOpts">' +
+    c.topTalents.slice(0,14).map(function(t){ return '<div class="char-option" data-id="'+t.id+'" onclick="toggleTalent(\''+t.id+'\')">'+t.name+'</div>'; }).join('') +
     '</div></div>' +
     '<button class="btn" style="width:100%;margin-top:15px" onclick="generateCharCard()">生成角色卡片</button>' +
     '</div>';
@@ -1543,23 +1890,36 @@ function openCharBuilder() {
   document.getElementById('modalOverlay').classList.add('show');
 }
 
+function _toggleOptClass(containerId, id, isSelected) {
+  var el = document.querySelector('#' + containerId + ' [data-id="' + id + '"]');
+  if (el) { if (isSelected) el.classList.add('selected'); else el.classList.remove('selected'); }
+}
+
 function selectHero(id) {
   charBuild.hero = id;
-  showToast('已选择: ' + DB.find(i => i.id === id).name);
+  var prev = document.querySelectorAll('#charHeroOpts .selected');
+  for (var i=0;i<prev.length;i++) prev[i].classList.remove('selected');
+  _toggleOptClass('charHeroOpts', id, true);
+  showToast('已选择: ' + DB.find(function(i){ return i.id === id; }).name);
 }
 
 function selectWeapon(id) {
   charBuild.weapon = id;
-  showToast('已装备: ' + DB.find(i => i.id === id).name);
+  var prev = document.querySelectorAll('#charWeaponOpts .selected');
+  for (var i=0;i<prev.length;i++) prev[i].classList.remove('selected');
+  _toggleOptClass('charWeaponOpts', id, true);
+  showToast('已装备: ' + DB.find(function(i){ return i.id === id; }).name);
 }
 
 function toggleSkill(id) {
   var idx = charBuild.skills.indexOf(id);
   if (idx >= 0) {
     charBuild.skills.splice(idx, 1);
+    _toggleOptClass('charSkillOpts', id, false);
   } else if (charBuild.skills.length < 3) {
     charBuild.skills.push(id);
-    showToast('已添加技能: ' + DB.find(i => i.id === id).name);
+    _toggleOptClass('charSkillOpts', id, true);
+    showToast('已添加技能: ' + DB.find(function(i){ return i.id === id; }).name);
   } else {
     showToast('最多选择3个技能');
   }
@@ -1569,9 +1929,11 @@ function toggleTalent(id) {
   var idx = charBuild.talents.indexOf(id);
   if (idx >= 0) {
     charBuild.talents.splice(idx, 1);
+    _toggleOptClass('charTalentOpts', id, false);
   } else if (charBuild.talents.length < 3) {
     charBuild.talents.push(id);
-    showToast('已添加天赋: ' + DB.find(i => i.id === id).name);
+    _toggleOptClass('charTalentOpts', id, true);
+    showToast('已添加天赋: ' + DB.find(function(i){ return i.id === id; }).name);
   } else {
     showToast('最多选择3个天赋');
   }
@@ -1864,10 +2226,13 @@ function renderEnhanced() {
     var hl = currentHighlight === item.id ? ' highlight' : '';
     var isCollected = myCollection.indexOf(item.id) >= 0;
     
-    html += '<div class="card' + hl + '" data-rank="' + item.rank + '" onclick="copyCard(\'' + esc(item.id) + '\');markViewed(\'' + esc(item.id) + '\')" ondblclick="toggleCollect(\'' + esc(item.id) + '\')">' +
+    html += '<div class="card' + hl + '" data-rank="' + item.rank + '" onclick="copyCard(\'' + esc(item.id) + '\');markViewed(\'' + esc(item.id) + '\')">' +
       '<div class="card-header">' +
-        '<div class="card-name">' + (isCollected ? '⭐ ' : '') + esc(item.name) + '</div>' +
-        '<div class="card-source">' + esc(item.source) + '</div>' +
+        '<div class="card-name">' + (isCollected ? '\u2B50 ' : '') + esc(item.name) + '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+          '<span class="card-source">' + esc(item.source) + '</span>' +
+          '<span class="collect-btn' + (isCollected ? ' collected' : '') + '" onclick="event.stopPropagation();toggleCollect(\'' + esc(item.id) + '\')" title="' + (isCollected ? '取消收藏' : '收藏') + '">' + (isCollected ? '\u2B50' : '\u2606') + '</span>' +
+        '</div>' +
       '</div>' +
       '<div class="card-desc">' + esc(item.desc) + '</div>' +
       '<div class="card-footer">' +
@@ -1889,6 +2254,7 @@ function initEnhanced() {
   initSearch();
   initMap();
   renderEnhanced();
+  updateStats();
 }
 
 // ========== 世界观弹窗 ==========
@@ -2121,35 +2487,12 @@ var LORE_DATA = {
 };
 
 function openLore() {
-  var overlay = document.getElementById('modalOverlay');
-  var title = document.getElementById('modalTitle');
-  var body = document.querySelector('.modal-body');
-  
-  var modules = ['creation', 'fiveRealms', 'factions', 'timeline', 'heroes'];
-  var current = 0;
-  
-  function showModule(idx) {
-    current = idx;
-    var data = LORE_DATA[modules[idx]];
-    title.textContent = data.icon + ' ' + data.title;
-    title.style.color = data.color;
-    
-    var navBtns = modules.map(function(m, i) {
-      var d = LORE_DATA[m];
-      return '<button onclick="showLoreModule(' + i + ')" style="padding:6px 12px;border:1px solid ' + (i===idx ? d.color : 'rgba(150,130,90,0.3)') + ';background:' + (i===idx ? 'rgba(212,168,83,0.2)' : 'rgba(20,18,30,0.8)') + ';color:' + (i===idx ? d.color : 'var(--text-muted)') + ';border-radius:8px;cursor:pointer;font-size:0.8rem;margin:2px">' + d.icon + ' ' + d.title + '</button>';
-    }).join('');
-    
-    body.innerHTML = '<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:4px">' + navBtns + '</div><div style="border-top:1px solid rgba(100,100,120,0.2);padding-top:12px;line-height:1.7;font-size:0.9rem;color:var(--text-muted)">' + data.content + '</div>';
-  }
-  
-  showModule(0);
-  
-  window._loreNav = function(idx) { showModule(idx); };
-  
-  overlay.classList.add('show');
+  window._loreModules = ['creation', 'fiveRealms', 'factions', 'timeline', 'heroes'];
+  showLoreModule(0);
+  document.getElementById('modalOverlay').classList.add('show');
 }
 window.showLoreModule = function(idx) {
-  var modules = ['creation', 'fiveRealms', 'factions', 'timeline', 'heroes'];
+  var modules = window._loreModules || ['creation', 'fiveRealms', 'factions', 'timeline', 'heroes'];
   var data = LORE_DATA[modules[idx]];
   var title = document.getElementById('modalTitle');
   var body = document.querySelector('.modal-body');
@@ -2158,11 +2501,143 @@ window.showLoreModule = function(idx) {
   
   var navBtns = modules.map(function(m, i) {
     var d = LORE_DATA[m];
-    return '<button onclick="showLoreModule(' + i + ')" style="padding:6px 12px;border:1px solid ' + (i===idx ? d.color : 'rgba(150,130,90,0.3)') + ';background:' + (i===idx ? 'rgba(212,168,83,0.2)' : 'rgba(20,18,30,0.8)') + ';color:' + (i===idx ? d.color : 'var(--text-muted)') + ';border-radius:8px;cursor:pointer;font-size:0.8rem;margin:2px">' + d.icon + ' ' + d.title + '</button>';
+    var active = i === idx;
+    return '<button onclick="showLoreModule(' + i + ')" style="padding:6px 12px;border:1px solid ' + (active ? d.color : 'rgba(150,130,90,0.3)') + ';background:' + (active ? 'rgba(212,168,83,0.2)' : 'rgba(20,18,30,0.8)') + ';color:' + (active ? d.color : 'var(--text-muted)') + ';border-radius:8px;cursor:pointer;font-size:0.8rem;margin:2px">' + d.icon + ' ' + d.title + '</button>';
   }).join('');
   
   body.innerHTML = '<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:4px">' + navBtns + '</div><div style="border-top:1px solid rgba(100,100,120,0.2);padding-top:12px;line-height:1.7;font-size:0.9rem;color:var(--text-muted)">' + data.content + '</div>';
 };
+
+// ========== v3.0 Particle System ========== 
+(function(){
+  var canvas = document.getElementById('particleCanvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var PARTICLE_COUNT = 35;
+  var runes = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛞ','ᛟ'];
+  
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  
+  function Particle(){
+    this.reset();
+  }
+  Particle.prototype.reset = function(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = -Math.random() * 0.4 - 0.1;
+    this.life = Math.random() * 200 + 100;
+    this.maxLife = this.life;
+    this.size = Math.random() * 14 + 8;
+    this.isRune = Math.random() < 0.3;
+    if(this.isRune){
+      this.char = runes[Math.floor(Math.random() * runes.length)];
+      this.size = Math.random() * 10 + 10;
+    }
+    this.hue = Math.random() < 0.7 ? 38 : 270; // gold or purple
+  };
+  Particle.prototype.update = function(){
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life--;
+    if(this.life <= 0 || this.y < -20 || this.x < -20 || this.x > canvas.width + 20){
+      this.reset();
+      this.y = canvas.height + 10;
+    }
+  };
+  Particle.prototype.draw = function(){
+    var alpha = (this.life / this.maxLife) * 0.35;
+    if(this.isRune){
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.6;
+      ctx.font = this.size + 'px serif';
+      ctx.fillStyle = 'hsla(' + this.hue + ',60%,65%,1)';
+      ctx.fillText(this.char, this.x, this.y);
+      ctx.restore();
+    } else {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 0.4, 0, Math.PI * 2);
+      var gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 0.5);
+      gradient.addColorStop(0, 'hsla(' + this.hue + ',70%,70%,0.8)');
+      gradient.addColorStop(1, 'hsla(' + this.hue + ',70%,70%,0)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.restore();
+    }
+  };
+  
+  for(var i = 0; i < PARTICLE_COUNT; i++){
+    particles.push(new Particle());
+  }
+  
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  function animate(){
+    if(reducedMotion) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for(var i = 0; i < particles.length; i++){
+      particles[i].update();
+      particles[i].draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ========== v3.0 Loading Screen ========== 
+(function(){
+  var bar = document.getElementById('loadingBar');
+  var screen = document.getElementById('loadingScreen');
+  if(!bar || !screen) return;
+  var progress = 0;
+  var interval = setInterval(function(){
+    progress += Math.random() * 15 + 5;
+    if(progress > 90) progress = 90;
+    bar.style.width = progress + '%';
+  }, 150);
+  
+  window.addEventListener('load', function(){
+    clearInterval(interval);
+    bar.style.width = '100%';
+    setTimeout(function(){
+      screen.classList.add('fade-out');
+      setTimeout(function(){
+        screen.style.display = 'none';
+      }, 800);
+    }, 300);
+  });
+})();
+
+// ========== v3.0 Stagger Card Animation ========== 
+(function(){
+  var style = document.createElement('style');
+  style.textContent = '.card{animation-delay:var(--card-delay,0s)}';
+  document.head.appendChild(style);
+  
+  var observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.type === 'childList' && m.target.id === 'grid'){
+        var cards = document.querySelectorAll('#grid .card');
+        cards.forEach(function(card, i){
+          card.style.setProperty('--card-delay', Math.min(i * 0.03, 0.6) + 's');
+        });
+      }
+    });
+  });
+  
+  var grid = document.getElementById('grid');
+  if(grid){
+    observer.observe(grid, {childList: true});
+  }
+})();
 </script>
 </body>
 </html>
