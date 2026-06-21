@@ -1,4 +1,4 @@
-// FantasyForge 数据库 | 条目数: 766
+// FantasyForge 数据库 | 条目数: 746
 // 生成时间: 2026-06-12 09:46:00
 var DB = [
   {id:'w01',name:'霜之哀伤',rank:'legend',cat:'weapon',source:'魔兽世界',elements:['ice','dark','fighting'],desc:'洛丹伦王子阿尔萨斯在面对亡灵天灾时插入的诅咒之剑，由巫妖王亲自铸造。剑身散发着幽蓝寒光，能吸取受害者的灵魂为己所用，持有者会逐渐被其意志侵蚀。'},
