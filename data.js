@@ -1,5 +1,5 @@
-// FantasyForge 数据库 | 条目数: 814
-// 生成时间: 2026-06-23 21:46:00
+// FantasyForge 数据库 | 条目数: 816
+// 生成时间: 2026-06-24 09:51:30
 var DB = [
   {id:'w01',name:'霜之哀伤',rank:'legend',cat:'weapon',source:'魔兽世界',elements:['ice','dark','fighting'],desc:'洛丹伦王子阿尔萨斯在面对亡灵天灾时插入的诅咒之剑，由巫妖王亲自铸造。剑身散发着幽蓝寒光，能吸取受害者的灵魂为己所用，持有者会逐渐被其意志侵蚀。'},
   {id:'w02',name:'埃癸斯神盾',rank:'legend',cat:'weapon',source:'希腊神话',elements:['light','steel'],desc:'众神之王宙斯的青铜盾牌，由独眼巨人打造。盾面上刻有美杜莎的头颅图案，举起此盾者可免疫一切攻击，是神盾中最坚固的护佑。'},
